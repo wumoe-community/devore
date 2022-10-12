@@ -1,0 +1,2 @@
+(def-symbol (delay ex) (lambda () ex))
+(def (force de) (de))
