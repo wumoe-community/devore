@@ -3,7 +3,7 @@ package cn.devore.lang.token.function;
 import cn.devore.lang.Env;
 import cn.devore.lang.Token;
 import cn.devore.lang.token.KeywordToken;
-import cn.devore.lang.type.DevoreType;
+import cn.devore.lang.DevoreType;
 
 import java.util.ArrayList;
 import java.util.List;

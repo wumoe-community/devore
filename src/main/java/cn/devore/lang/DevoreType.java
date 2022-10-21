@@ -1,4 +1,4 @@
-package cn.devore.lang.type;
+package cn.devore.lang;
 
 import cn.devore.error.DevoreAssert;
 
