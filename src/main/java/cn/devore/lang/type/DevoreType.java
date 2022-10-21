@@ -144,8 +144,8 @@ public class DevoreType {
         addType("list", "immutable_list");
         addType("list", "variable_list");
         addType("any", "table");
-        addType("list", "immutable_table");
-        addType("list", "variable_table");
+        addType("table", "immutable_table");
+        addType("table", "variable_table");
         addType("any", "string");
         addType("any", "id");
         addType("any", "bool");
