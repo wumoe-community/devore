@@ -20,8 +20,13 @@ public class StringToken extends Token {
     }
 
     @Override
+    public String type() {
+        return "string";
+    }
+
+    @Override
     public Token deepcopy() {
-        return new IdToken(value());
+        return new StringToken(value());
     }
 
     @Override

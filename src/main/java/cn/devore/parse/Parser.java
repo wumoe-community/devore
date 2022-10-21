@@ -1,6 +1,7 @@
 package cn.devore.parse;
 
 import cn.devore.Devore;
+import cn.devore.error.DevoreAssert;
 import cn.devore.lang.Ast;
 import cn.devore.lang.Token;
 import cn.devore.lang.token.IdToken;
@@ -35,6 +36,7 @@ public class Parser {
             } else if (state == 2) {
                 if (tokens.get(index) == KeywordToken.KEYWORD_RB) {
                     temp = Devore.AST_EMPTY;
+                    DevoreAssert.paperAssert(stack.peek() != null, "Stack is empty.");
                     assert stack.peek() != null;
                     stack.peek().add(temp);
                     state = -1;
@@ -44,6 +46,7 @@ public class Parser {
                 if (tokens.get(index) == KeywordToken.KEYWORD_LB)
                     tokens.add(index, new IdToken("apply"));
                 temp = new Ast(tokens.get(index));
+                DevoreAssert.paperAssert(stack.peek() != null, "Stack is empty.");
                 assert stack.peek() != null;
                 stack.peek().add(temp);
                 stack.push(temp);
@@ -52,11 +55,13 @@ public class Parser {
                 state = stack.isEmpty() ? 1 : 2;
             else if (tokens.get(index) == KeywordToken.KEYWORD_RB) {
                 if (index >= 2 && tokens.get(index - 2) == KeywordToken.KEYWORD_LB) {
+                    DevoreAssert.paperAssert(stack.peek() != null, "Stack is empty.");
                     assert stack.peek() != null;
                     stack.peek().setType(Ast.AstType.FUNCTION);
                 }
                 stack.pop();
             } else {
+                DevoreAssert.paperAssert(stack.peek() != null, "Stack is empty.");
                 assert stack.peek() != null;
                 stack.peek().add(new Ast(tokens.get(index)));
             }

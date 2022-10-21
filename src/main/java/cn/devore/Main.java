@@ -3,6 +3,7 @@ package cn.devore;
 import cn.devore.lang.Env;
 import cn.devore.lang.Token;
 import cn.devore.lang.token.KeywordToken;
+import cn.devore.lang.type.DevoreType;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.nio.file.Path;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        DevoreType.init();
         repl();
     }
 

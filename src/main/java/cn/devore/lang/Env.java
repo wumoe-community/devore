@@ -1,6 +1,8 @@
 package cn.devore.lang;
 
 import cn.devore.Devore;
+import cn.devore.lang.token.function.DevoreFunctionScheduler;
+import cn.devore.lang.token.function.OrdinaryFunctionToken;
 import cn.devore.module.Module;
 
 import java.util.HashMap;
@@ -60,7 +62,13 @@ public class Env {
     }
 
     public void put(String key, Token value) {
-        _env.put(key, value);
+        if (value instanceof OrdinaryFunctionToken)
+            if (contains(key)) {
+                ((DevoreFunctionScheduler) get(key)).addFunction((OrdinaryFunctionToken) value);
+            } else
+                _env.put(key, new DevoreFunctionScheduler().addFunction((OrdinaryFunctionToken) value));
+        else
+            _env.put(key, value);
     }
 
     public boolean contains(String key) {

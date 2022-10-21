@@ -9,17 +9,18 @@ import java.util.function.BiFunction;
 public class BuiltinOrdinaryFunctionToken extends OrdinaryFunctionToken {
     private final BiFunction<List<Token>, Env, Token> _func;
 
-    private BuiltinOrdinaryFunctionToken(BiFunction<List<Token>, Env, Token> func) {
+    private BuiltinOrdinaryFunctionToken(BiFunction<List<Token>, Env, Token> func, String[] types, boolean variadic) {
+        super(types, variadic);
         this._func = func;
     }
 
-    public static BuiltinOrdinaryFunctionToken make(BiFunction<List<Token>, Env, Token> func) {
-        return new BuiltinOrdinaryFunctionToken(func);
+    public static BuiltinOrdinaryFunctionToken make(BiFunction<List<Token>, Env, Token> func, String[] types, boolean variadic) {
+        return new BuiltinOrdinaryFunctionToken(func, types, variadic);
     }
 
     @Override
     public Token deepcopy() {
-        return make(_func);
+        return make(_func, _types, _variadic);
     }
 
     @Override

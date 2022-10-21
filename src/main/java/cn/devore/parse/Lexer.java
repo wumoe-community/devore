@@ -209,7 +209,15 @@ public class Lexer {
                     builder.append(expression.charAt(index));
                     ++index;
                 }
-                tokens.add(new IdToken(builder.toString()));
+                String s = builder.toString();
+                String _id = s;
+                String _type = "undefined";
+                if (s.contains(":")) {
+                    int inOf = s.indexOf(":");
+                    _id = s.substring(0, inOf);
+                    _type = s.substring(inOf + 1);
+                }
+                tokens.add(new IdToken(_id, _type));
             }
         }
         return tokens;

@@ -21,6 +21,11 @@ public class VariableListToken extends ListToken {
     }
 
     @Override
+    public String type() {
+        return "variable_list";
+    }
+
+    @Override
     public Token deepcopy() {
         VariableListToken list = new VariableListToken();
         for (int i = 0; i < size(); ++i)

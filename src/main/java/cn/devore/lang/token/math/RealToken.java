@@ -91,8 +91,8 @@ public class RealToken extends NumberToken {
     }
 
     @Override
-    public NumberToken add(NumberToken other) {
-        return this.add((RealToken) this.convert(other));
+    public NumberToken add(ArithmeticToken other) {
+        return this.add((RealToken) this.convert((NumberToken) other));
     }
 
     public RealToken add(RealToken other) {
@@ -100,8 +100,8 @@ public class RealToken extends NumberToken {
     }
 
     @Override
-    public NumberToken sub(NumberToken other) {
-        return this.sub((RealToken) this.convert(other));
+    public NumberToken sub(ArithmeticToken other) {
+        return this.sub((RealToken) this.convert((NumberToken) other));
     }
 
     public RealToken sub(RealToken other) {
@@ -109,8 +109,8 @@ public class RealToken extends NumberToken {
     }
 
     @Override
-    public NumberToken mul(NumberToken other) {
-        return this.mul((RealToken) this.convert(other));
+    public NumberToken mul(ArithmeticToken other) {
+        return this.mul((RealToken) this.convert((NumberToken) other));
     }
 
     public RealToken mul(RealToken other) {
@@ -118,8 +118,8 @@ public class RealToken extends NumberToken {
     }
 
     @Override
-    public NumberToken div(NumberToken other) {
-        return this.div((RealToken) this.convert(other));
+    public NumberToken div(ArithmeticToken other) {
+        return this.div((RealToken) this.convert((NumberToken) other));
     }
 
     public RealToken div(RealToken other) {
@@ -265,6 +265,11 @@ public class RealToken extends NumberToken {
     @Override
     public BoolToken isPrime() {
         return BoolToken.valueOf(MathUtils.isPrime(_val.toBigInteger()));
+    }
+
+    @Override
+    public String type() {
+        return (_val.signum() == 0 || _val.scale() <= 0 || _val.stripTrailingZeros().scale() <= 0)? "int": "real";
     }
 
     @Override

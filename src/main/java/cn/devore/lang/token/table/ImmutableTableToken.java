@@ -26,6 +26,11 @@ public class ImmutableTableToken extends TableToken {
     }
 
     @Override
+    public String type() {
+        return "immutable_table";
+    }
+
+    @Override
     public Token deepcopy() {
         ImmutableTableToken dict = new ImmutableTableToken();
         ListToken keys = keys();

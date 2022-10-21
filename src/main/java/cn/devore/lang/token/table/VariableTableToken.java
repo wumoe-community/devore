@@ -16,6 +16,11 @@ public class VariableTableToken extends TableToken {
     }
 
     @Override
+    public String type() {
+        return "variable_table";
+    }
+
+    @Override
     public Token deepcopy() {
         ImmutableTableToken dict = new ImmutableTableToken();
         ListToken keys = keys();

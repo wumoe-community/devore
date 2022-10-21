@@ -16,6 +16,11 @@ public class BoolToken extends Token {
     }
 
     @Override
+    public String type() {
+        return "bool";
+    }
+
+    @Override
     public Token deepcopy() {
         return new BoolToken(_bool);
     }

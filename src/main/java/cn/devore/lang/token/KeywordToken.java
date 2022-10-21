@@ -20,6 +20,11 @@ public class KeywordToken extends Token {
     }
 
     @Override
+    public String type() {
+        return null;
+    }
+
+    @Override
     public Token deepcopy() {
         return new KeywordToken(type);
     }

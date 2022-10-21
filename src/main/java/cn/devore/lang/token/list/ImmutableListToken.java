@@ -28,6 +28,11 @@ public class ImmutableListToken extends ListToken {
     }
 
     @Override
+    public String type() {
+        return "immutable_list";
+    }
+
+    @Override
     public Token deepcopy() {
         ImmutableListToken list = new ImmutableListToken();
         for (int i = 0; i < size(); ++i)

@@ -6,6 +6,7 @@ import cn.devore.lang.Env;
 import cn.devore.lang.Evaluator;
 import cn.devore.lang.Token;
 import cn.devore.lang.token.*;
+import cn.devore.lang.token.math.ArithmeticToken;
 import cn.devore.lang.token.table.ImmutableTableToken;
 import cn.devore.lang.token.table.TableToken;
 import cn.devore.lang.token.table.VariableTableToken;
@@ -60,30 +61,30 @@ public class CoreModule extends Module {
             List<Token> list = new ArrayList<>();
             switch (args.size()) {
                 case 1 -> {
-                    NumberToken end = (NumberToken) args.get(0);
-                    for(NumberToken i = RealToken.ZERO; i.compareTo(end) < 0; i = i.add(RealToken.ONE))
+                    ArithmeticToken end = (ArithmeticToken) args.get(0);
+                    for(ArithmeticToken i = RealToken.ZERO; i.compareTo(end) < 0; i = i.add(RealToken.ONE))
                         list.add(i);
                 }
                 case 2 -> {
-                    NumberToken start = (NumberToken) args.get(0);
-                    NumberToken end = (NumberToken) args.get(1);
-                    for(NumberToken i = start; i.compareTo(end) < 0; i = i.add(RealToken.ONE))
+                    ArithmeticToken start = (ArithmeticToken) args.get(0);
+                    ArithmeticToken end = (ArithmeticToken) args.get(1);
+                    for(ArithmeticToken i = start; i.compareTo(end) < 0; i = i.add(RealToken.ONE))
                         list.add(i);
                 }
                 default -> {
-                    NumberToken start = (NumberToken) args.get(0);
-                    NumberToken end = (NumberToken) args.get(1);
-                    NumberToken step = (NumberToken) args.get(2);
-                    NumberToken size = end.sub(start).div(step);
-                    for(NumberToken i = RealToken.ZERO; i.compareTo(size) < 0; i = i.add(RealToken.ONE))
+                    ArithmeticToken start = (ArithmeticToken) args.get(0);
+                    ArithmeticToken end = (ArithmeticToken) args.get(1);
+                    ArithmeticToken step = (ArithmeticToken) args.get(2);
+                    ArithmeticToken size = end.sub(start).div(step);
+                    for(ArithmeticToken i = RealToken.ZERO; i.compareTo(size) < 0; i = i.add(RealToken.ONE))
                         list.add(start.add(i.mul(step)));
                 }
             }
             return new ImmutableListToken(list);
-        }));
+        }, new String[]{"int"}, true));
         _env.put("random", BuiltinOrdinaryFunctionToken.make((args, env) -> {
-            BigInteger rangeStart = ((NumberToken) args.get(0)).toBigInteger();
-            BigInteger rangeEnd = ((NumberToken) args.get(1)).toBigInteger();
+            BigInteger rangeStart = args.size() == 1? BigInteger.ZERO : ((NumberToken) args.get(0)).toBigInteger();
+            BigInteger rangeEnd = ((NumberToken) args.get(args.size() == 1? 0: 1)).toBigInteger();
             Random rand = new Random();
             int scale = rangeEnd.toString().length();
             StringBuilder generated = new StringBuilder();
@@ -104,49 +105,50 @@ public class CoreModule extends Module {
             BigInteger returnInteger = bd6.setScale(0, RoundingMode.FLOOR).toBigInteger();
             returnInteger = (returnInteger.compareTo(rangeEnd) > 0 ? rangeEnd : returnInteger);
             return RealToken.valueOf(returnInteger);
-        }));
+        }, new String[]{"int"}, true));
         _env.put("println", BuiltinOrdinaryFunctionToken.make(((args, env) -> {
             StringBuilder builder = new StringBuilder();
             args.forEach(builder::append);
             Devore.print.println(builder);
             return KeywordToken.KEYWORD_NIL;
-        })));
+        }), new String[]{"any"}, true));
         _env.put("print", BuiltinOrdinaryFunctionToken.make(((args, env) -> {
             StringBuilder builder = new StringBuilder();
             args.forEach(builder::append);
             Devore.print.print(builder);
             return KeywordToken.KEYWORD_NIL;
-        })));
+        }), new String[]{"any"}, true));
         _env.put("+", BuiltinOrdinaryFunctionToken.make(((args, env) -> {
-            NumberToken number = (NumberToken) args.get(0);
+            ArithmeticToken arithmetic = (ArithmeticToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
-                number = number.add((NumberToken) args.get(i));
-            return number;
-        })));
+                arithmetic = arithmetic.add((ArithmeticToken) args.get(i));
+            return arithmetic;
+        }), new String[]{"arithmetic"}, true));
         _env.put("-", BuiltinOrdinaryFunctionToken.make(((args, env) -> {
-            NumberToken number = (NumberToken) args.get(0);
-            if (args.size() == 1)
-                return number.mul(number.negOne());
+            ArithmeticToken arithmetic = (ArithmeticToken) args.get(0);
+            if (arithmetic instanceof NumberToken && args.size() == 1)
+                return ((NumberToken) arithmetic).negOne();
             for (int i = 1; i < args.size(); ++i)
-                number = number.sub((NumberToken) args.get(i));
-            return number;
-        })));
+                arithmetic = arithmetic.sub((ArithmeticToken) args.get(i));
+            return arithmetic;
+        }), new String[]{"arithmetic"}, true));
         _env.put("*", BuiltinOrdinaryFunctionToken.make(((args, env) -> {
-            NumberToken number = (NumberToken) args.get(0);
+            ArithmeticToken arithmetic = (ArithmeticToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
-                number = number.mul((NumberToken) args.get(i));
-            return number;
-        })));
+                arithmetic = arithmetic.mul((ArithmeticToken) args.get(i));
+            return arithmetic;
+        }), new String[]{"arithmetic"}, true));
         _env.put("/", BuiltinOrdinaryFunctionToken.make(((args, env) -> {
-            NumberToken number = (NumberToken) args.get(0);
+            ArithmeticToken arithmetic = (ArithmeticToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
-                number = number.div((NumberToken) args.get(i));
-            return number;
-        })));
+                arithmetic = arithmetic.div((ArithmeticToken) args.get(i));
+            return arithmetic;
+        }), new String[]{"arithmetic"}, true));
         _env.put("undef", BuiltinOrdinaryFunctionToken.make((args, env) -> {
-            env.remove(args.get(0).toString());
+            for (Token token : args)
+                env.remove(token.toString());
             return KeywordToken.KEYWORD_NIL;
-        }));
+        }, new String[]{"id", "any"}, true));
         _env.put("def-symbol", BuiltinSpecialFunctionToken.make((ast, env) -> {
             List<String> parameters = new ArrayList<>();
             for (Ast child : ast.get(0).children())
@@ -179,23 +181,24 @@ public class CoreModule extends Module {
         }));
         _env.put("def", BuiltinSpecialFunctionToken.make((ast, env) -> {
             String key = ast.get(0).op().toString();
-            if (!env.contains(key)) {
-                Token value = KeywordToken.KEYWORD_NIL;
-                if (ast.get(0).isEmpty() && ast.get(0).type() != Ast.AstType.FUNCTION) {
-                    Env tempEnv = env.createChild();
-                    for (int i = 1; i < ast.size(); ++i)
-                        value = Evaluator.eval(ast.get(i), tempEnv);
-                } else {
-                    List<String> parameters = new ArrayList<>();
-                    List<Ast> asts = new ArrayList<>();
-                    for (int i = 0; i < ast.get(0).size(); ++i)
-                        parameters.add(ast.get(0).get(i).op().toString());
-                    for (int i = 1; i < ast.size(); ++i)
-                        asts.add(ast.get(i).copy());
-                    value = DevoreBaseOrdinaryFunctionToken.make(asts, parameters);
+            Token value = KeywordToken.KEYWORD_NIL;
+            if (ast.get(0).isEmpty() && ast.get(0).type() != Ast.AstType.FUNCTION) {
+                Env tempEnv = env.createChild();
+                for (int i = 1; i < ast.size(); ++i)
+                    value = Evaluator.eval(ast.get(i), tempEnv);
+            } else {
+                List<String> parameters = new ArrayList<>();
+                String[] types = new String[ast.get(0).size()];
+                List<Ast> asts = new ArrayList<>();
+                for (int i = 0; i < ast.get(0).size(); ++i) {
+                    parameters.add(ast.get(0).get(i).op().toString());
+                    types[i] = ((IdToken) ast.get(0).get(i).op())._type;
                 }
-                _env.put(key, value);
+                for (int i = 1; i < ast.size(); ++i)
+                    asts.add(ast.get(i).copy());
+                value = DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, false);
             }
+            _env.put(key, value);
             return KeywordToken.KEYWORD_NIL;
         }));
         _env.put("set!", BuiltinSpecialFunctionToken.make((ast, env) -> {
@@ -207,12 +210,15 @@ public class CoreModule extends Module {
                     value = Evaluator.eval(ast.get(i), tempEnv);
             } else {
                 List<String> parameters = new ArrayList<>();
+                String[] types = new String[ast.get(0).size()];
                 List<Ast> asts = new ArrayList<>();
-                for (int i = 0; i < ast.get(0).size(); ++i)
+                for (int i = 0; i < ast.get(0).size(); ++i) {
                     parameters.add(ast.get(0).get(i).op().toString());
+                    types[i] = ((IdToken) ast.get(0).get(i).op())._type;
+                }
                 for (int i = 1; i < ast.size(); ++i)
                     asts.add(ast.get(i).copy());
-                value = DevoreBaseOrdinaryFunctionToken.make(asts, parameters);
+                value = DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, false);
             }
             _env.set(key, value);
             return KeywordToken.KEYWORD_NIL;
@@ -222,14 +228,14 @@ public class CoreModule extends Module {
             for (int i = 1; i < args.size(); ++i)
                 tokens.add(args.get(i));
             Ast asts = new Ast();
-            if (args.get(0) instanceof OrdinaryFunctionToken ordinaryFunc)
-                return ordinaryFunc.call(tokens, env);
+            if (args.get(0) instanceof DevoreFunctionScheduler functionScheduler)
+                return functionScheduler.call(tokens, env);
             for (Token token : tokens)
                 asts.add(new Ast(token));
             if (args.get(0) instanceof SpecialFunctionToken specialFunc)
                 return specialFunc.call(asts, env);
             return args.get(0);
-        }));
+        }, new String[]{"function", "any"}, true));
         _env.put("require", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             String path = args.get(0).toString();
             if (Devore._module.containsKey(path)) {
@@ -255,21 +261,26 @@ public class CoreModule extends Module {
                 return BoolToken.TRUE;
             }
             return BoolToken.FALSE;
-        }));
+        }, new String[]{"string"}, false));
         _env.put("lambda", BuiltinSpecialFunctionToken.make((ast, env) -> {
             List<String> parameters = new ArrayList<>();
+            String[] types = new String[ast.get(0).size()];
             List<Ast> asts = new ArrayList<>();
             Token parameter = ast.get(0).op();
-            if (!KeywordToken.KEYWORD_EMPTY.equiv(parameter))
+            if (!KeywordToken.KEYWORD_EMPTY.equiv(parameter)) {
                 parameters.add(parameter.toString());
+                types[parameters.size()] = ((IdToken) parameter)._type;
+            }
             for (int i = 0; i < ast.get(0).size(); ++i) {
                 parameter = ast.get(0).get(i).op();
-                if (!KeywordToken.KEYWORD_EMPTY.equiv(parameter))
+                if (!KeywordToken.KEYWORD_EMPTY.equiv(parameter)) {
                     parameters.add(parameter.toString());
+                    types[parameters.size()] = ((IdToken) parameter)._type;
+                }
             }
             for (int i = 1; i < ast.size(); ++i)
                 asts.add(ast.get(i).copy());
-            return DevoreBaseOrdinaryFunctionToken.make(asts, parameters);
+            return DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, false);
         }));
         _env.put("if", BuiltinSpecialFunctionToken.make((ast, env) -> {
             Env tempEnv = env.createChild();
@@ -289,7 +300,7 @@ public class CoreModule extends Module {
                         || temp.compareTo((ComparableToken) args.get(i)) == 0)
                     return BoolToken.FALSE;
             return BoolToken.TRUE;
-        }));
+        }, new String[]{"comparable"}, true));
         _env.put("<", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             ComparableToken temp = (ComparableToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
@@ -297,35 +308,35 @@ public class CoreModule extends Module {
                         || temp.compareTo((ComparableToken) args.get(i)) == 0)
                     return BoolToken.FALSE;
             return BoolToken.TRUE;
-        }));
+        }, new String[]{"comparable"}, true));
         _env.put(">=", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             ComparableToken temp = (ComparableToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
                 if (temp.compareTo((ComparableToken) args.get(i)) < 0)
                     return BoolToken.FALSE;
             return BoolToken.TRUE;
-        }));
+        }, new String[]{"comparable"}, true));
         _env.put("<=", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             ComparableToken temp = (ComparableToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
                 if (temp.compareTo((ComparableToken) args.get(i)) > 0)
                     return BoolToken.FALSE;
             return BoolToken.TRUE;
-        }));
+        }, new String[]{"comparable"}, true));
         _env.put("=", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             ComparableToken temp = (ComparableToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
                 if (temp.compareTo((ComparableToken) args.get(i)) != 0)
                     return BoolToken.FALSE;
             return BoolToken.TRUE;
-        }));
+        }, new String[]{"comparable"}, true));
         _env.put("/=", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             ComparableToken temp = (ComparableToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
                 if (temp.compareTo((ComparableToken) args.get(i)) == 0)
                     return BoolToken.FALSE;
             return BoolToken.TRUE;
-        }));
+        }, new String[]{"comparable"}, true));
         _env.put("begin", BuiltinSpecialFunctionToken.make((ast, env) -> {
             Env tempEnv = env.createChild();
             Token result = Evaluator.eval(ast.get(0), tempEnv);
@@ -333,66 +344,107 @@ public class CoreModule extends Module {
                 result = Evaluator.eval(ast.get(i), tempEnv);
             return result;
         }));
-        _env.put("sin", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).sin()));
-        _env.put("cos", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).cos()));
-        _env.put("tan", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).tan()));
-        _env.put("asin", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).asin()));
-        _env.put("acos", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).acos()));
-        _env.put("atan", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).atan()));
-        _env.put("log", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).log()));
-        _env.put("ln", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).ln()));
-        _env.put("sqrt", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).sqrt()));
-        _env.put("ceil", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).ceil()));
-        _env.put("floor", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).floor()));
-        _env.put("prime?", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).isPrime()));
-        _env.put("negate", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).negate()));
-        _env.put("inc", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).inc()));
-        _env.put("dec", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).dec()));
-        _env.put("signnum", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).signnum()));
-        _env.put("abs", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).abs()));
-        _env.put("exp", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).exp()));
-        _env.put("factorial", BuiltinOrdinaryFunctionToken.make((args, env) -> ((NumberToken) args.get(0)).factorial()));
-        _env.put("list", BuiltinOrdinaryFunctionToken.make(((args, env) -> new ImmutableListToken(args))));
-        _env.put("variable-list!", BuiltinOrdinaryFunctionToken.make(((args, env) -> new VariableListToken(args))));
+        _env.put("sin", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).sin(), new String[]{"num"}, false));
+        _env.put("cos", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).cos(), new String[]{"num"}, false));
+        _env.put("tan", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).tan(), new String[]{"num"}, false));
+        _env.put("asin", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).asin(), new String[]{"num"}, false));
+        _env.put("acos", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).acos(), new String[]{"num"}, false));
+        _env.put("atan", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).atan(), new String[]{"num"}, false));
+        _env.put("log", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).log(), new String[]{"num"}, false));
+        _env.put("ln", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).ln(), new String[]{"num"}, false));
+        _env.put("sqrt", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).sqrt(), new String[]{"num"}, false));
+        _env.put("ceil", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).ceil(), new String[]{"num"}, false));
+        _env.put("floor", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).floor(), new String[]{"num"}, false));
+        _env.put("prime?", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).isPrime(), new String[]{"num"}, false));
+        _env.put("negate", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).negate(), new String[]{"num"}, false));
+        _env.put("inc", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).inc(), new String[]{"num"}, false));
+        _env.put("dec", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).dec(), new String[]{"num"}, false));
+        _env.put("signnum", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).signnum(), new String[]{"num"}, false));
+        _env.put("abs", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).abs(), new String[]{"num"}, false));
+        _env.put("exp", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).exp(), new String[]{"num"}, false));
+        _env.put("factorial", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).factorial(), new String[]{"num"}, false));
+        _env.put("list", BuiltinOrdinaryFunctionToken.make(((args, env) ->
+                new ImmutableListToken(args)), new String[]{"any"}, true));
+        _env.put("variable-list!", BuiltinOrdinaryFunctionToken.make(((args, env) ->
+                new VariableListToken(args)), new String[]{"any"}, true));
         _env.put("list-ref", BuiltinOrdinaryFunctionToken.make(((args, env) ->
-                ((ListToken) args.get(0)).get(((NumberToken) args.get(1)).toInt()))));
-        _env.put("list-add", BuiltinOrdinaryFunctionToken.make(((args, env) -> ((ListToken) args.get(0)).add(args.get(1)))));
+                ((ListToken) args.get(0)).get(((NumberToken) args.get(1)).toInt())), new String[]{"list", "int"}, false));
+        _env.put("list-add", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            ListToken list = (ListToken) args.get(0);
+            for (int i = 1; i < args.size(); ++i)
+                list.add(args.get(i));
+            return list;
+        }, new String[]{"list", "any"}, true));
         _env.put("list-set", BuiltinOrdinaryFunctionToken.make(((args, env) ->
-                ((ListToken) args.get(0)).set(((NumberToken) args.get(1)).toInt(), args.get(2)))));
-        _env.put("list-contains", BuiltinOrdinaryFunctionToken.make(((args, env) -> ((ListToken) args.get(0)).contains(args.get(1)))));
-        _env.put("list-remove", BuiltinOrdinaryFunctionToken.make(((args, env) -> ((ListToken) args.get(0)).remove(args.get(1)))));
-        _env.put("list-remove-index", BuiltinOrdinaryFunctionToken.make(((args, env) ->
-                ((ListToken) args.get(0)).remove(((NumberToken) args.get(1)).toInt()))));
-        _env.put("sort", BuiltinOrdinaryFunctionToken.make(((args, env) -> ((ListToken) args.get(0)).sort())));
-        _env.put("reverse", BuiltinOrdinaryFunctionToken.make(((args, env) -> ((ListToken) args.get(0)).reverse())));
-        _env.put("head", BuiltinOrdinaryFunctionToken.make(((args, env) -> ((ListToken) args.get(0)).head())));
-        _env.put("init", BuiltinOrdinaryFunctionToken.make(((args, env) -> ((ListToken) args.get(0)).init())));
-        _env.put("last", BuiltinOrdinaryFunctionToken.make(((args, env) -> ((ListToken) args.get(0)).last())));
-        _env.put("tail", BuiltinOrdinaryFunctionToken.make(((args, env) -> ((ListToken) args.get(0)).tail())));
-        _env.put("table", BuiltinOrdinaryFunctionToken.make((args, env) -> new ImmutableTableToken()));
-        _env.put("variable-table!", BuiltinOrdinaryFunctionToken.make((args, env) -> new VariableTableToken()));
-        _env.put("table-put", BuiltinOrdinaryFunctionToken.make((args, env) -> ((TableToken) args.get(0)).put(args.get(1), args.get(2))));
-        _env.put("table-get", BuiltinOrdinaryFunctionToken.make((args, env) -> ((TableToken) args.get(0)).get(args.get(1))));
-        _env.put("table-remove", BuiltinOrdinaryFunctionToken.make((args, env) -> ((TableToken) args.get(0)).remove(args.get(1))));
-        _env.put("table-keys", BuiltinOrdinaryFunctionToken.make((args, env) -> ((TableToken) args.get(0)).keys()));
-        _env.put("table-values", BuiltinOrdinaryFunctionToken.make((args, env) -> ((TableToken) args.get(0)).values()));
+                ((ListToken) args.get(0)).set(((NumberToken) args.get(1)).toInt(), args.get(2))), new String[]{"list", "int", "any"}, false));
+        _env.put("list-contains", BuiltinOrdinaryFunctionToken.make(((args, env) ->
+                ((ListToken) args.get(0)).contains(args.get(1))), new String[]{"list", "any"}, false));
+        _env.put("list-remove", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            ListToken list = (ListToken) args.get(0);
+            for (int i = 1; i < args.size(); ++i)
+                list.remove(args.get(i));
+            return list;
+        }, new String[]{"list", "any"}, true));
+        _env.put("list-remove-index", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            ListToken list = (ListToken) args.get(0);
+            for (int i = 1; i < args.size(); ++i)
+                list.remove(((NumberToken) args.get(i)).toInt());
+            return list;
+        }, new String[]{"list", "any"}, true));
+        _env.put("sort", BuiltinOrdinaryFunctionToken.make((args, env) -> ((ListToken) args.get(0)).sort(), new String[]{"list"}, false));
+        _env.put("reverse", BuiltinOrdinaryFunctionToken.make((args, env) -> ((ListToken) args.get(0)).reverse(), new String[]{"list"}, false));
+        _env.put("head", BuiltinOrdinaryFunctionToken.make((args, env) -> ((ListToken) args.get(0)).head(), new String[]{"list"}, false));
+        _env.put("init", BuiltinOrdinaryFunctionToken.make((args, env) -> ((ListToken) args.get(0)).init(), new String[]{"list"}, false));
+        _env.put("last", BuiltinOrdinaryFunctionToken.make((args, env) -> ((ListToken) args.get(0)).last(), new String[]{"list"}, false));
+        _env.put("tail", BuiltinOrdinaryFunctionToken.make((args, env) -> ((ListToken) args.get(0)).tail(), new String[]{"list"}, false));
+        _env.put("table", BuiltinOrdinaryFunctionToken.make((args, env) -> new ImmutableTableToken(), new String[]{}, false));
+        _env.put("variable-table!", BuiltinOrdinaryFunctionToken.make((args, env) -> new VariableTableToken(), new String[]{}, false));
+        _env.put("table-put", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((TableToken) args.get(0)).put(args.get(1), args.get(2)), new String[]{"table", "any", "any"}, false));
+        _env.put("table-get", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((TableToken) args.get(0)).get(args.get(1)), new String[]{"table", "any"}, false));
+        _env.put("table-remove", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((TableToken) args.get(0)).remove(args.get(1)), new String[]{"table", "any"}, false));
+        _env.put("table-keys", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((TableToken) args.get(0)).keys(), new String[]{"table"}, false));
+        _env.put("table-values", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((TableToken) args.get(0)).values(), new String[]{"table"}, false));
         _env.put("table-contains-key", BuiltinOrdinaryFunctionToken.make((args, env) ->
-                ((TableToken) args.get(0)).containsKey(args.get(1))));
+                ((TableToken) args.get(0)).containsKey(args.get(1)), new String[]{"table", "any"}, false));
         _env.put("table-contains-value", BuiltinOrdinaryFunctionToken.make((args, env) ->
-                ((TableToken) args.get(0)).containsValue(args.get(1))));
+                ((TableToken) args.get(0)).containsValue(args.get(1)), new String[]{"table", "any"}, false));
         _env.put("string-split", BuiltinOrdinaryFunctionToken.make((args, env) ->
-                ((StringToken) args.get(0)).split((StringToken) args.get(1))));
+                ((StringToken) args.get(0)).split((StringToken) args.get(1)), new String[]{"string", "string"}, false));
         _env.put("string-index", BuiltinOrdinaryFunctionToken.make((args, env) ->
-                ((StringToken) args.get(0)).indexOf((StringToken) args.get(1))));
+                ((StringToken) args.get(0)).indexOf((StringToken) args.get(1)), new String[]{"string", "string"}, false));
         _env.put("string-last-index", BuiltinOrdinaryFunctionToken.make((args, env) ->
-                ((StringToken) args.get(0)).lastIndexOf((StringToken) args.get(1))));
+                ((StringToken) args.get(0)).lastIndexOf((StringToken) args.get(1)), new String[]{"string", "string"}, false));
         _env.put("string-replace", BuiltinOrdinaryFunctionToken.make((args, env) ->
-                ((StringToken) args.get(0)).replace((StringToken) args.get(1), (StringToken) args.get(2))));
+                ((StringToken) args.get(0)).replace((StringToken) args.get(1), (StringToken) args.get(2)), new String[]{"string", "string"}, false));
         _env.put("string-substring", BuiltinOrdinaryFunctionToken.make((args, env) ->
-                ((StringToken) args.get(0)).substring((NumberToken) args.get(1), (NumberToken) args.get(2))));
-        _env.put("->string", BuiltinOrdinaryFunctionToken.make((args, env) -> new StringToken(args.get(0).toString())));
-        _env.put("->bool", BuiltinOrdinaryFunctionToken.make((args, env) -> BoolToken.valueOf(args.get(0).bool())));
-        _env.put("->real", BuiltinOrdinaryFunctionToken.make((args, env) -> RealToken.valueOf(args.get(0).toString())));
+                ((StringToken) args.get(0)).substring((NumberToken) args.get(1), (NumberToken) args.get(2)), new String[]{"string", "int", "int"}, false));
+        _env.put("->string", BuiltinOrdinaryFunctionToken.make((args, env) -> new StringToken(args.get(0).toString()), new String[]{"any"}, false));
+        _env.put("->bool", BuiltinOrdinaryFunctionToken.make((args, env) -> BoolToken.valueOf(args.get(0).bool()), new String[]{"any"}, false));
+        _env.put("->real", BuiltinOrdinaryFunctionToken.make((args, env) -> RealToken.valueOf(args.get(0).toString()), new String[]{"any"}, false));
     }
 
     private static void defSymbolRsc(Ast ast, String id, Ast value) {

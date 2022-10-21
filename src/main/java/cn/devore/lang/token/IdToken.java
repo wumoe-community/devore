@@ -6,9 +6,15 @@ import java.util.Objects;
 
 public class IdToken extends Token {
     private final String _id;
+    public final String _type;
+
+    public IdToken(String id, String type) {
+        this._id = id;
+        this._type = type;
+    }
 
     public IdToken(String id) {
-        this._id = id;
+        this(id, "undefined");
     }
 
     public String value() {
@@ -16,8 +22,13 @@ public class IdToken extends Token {
     }
 
     @Override
+    public String type() {
+        return "id";
+    }
+
+    @Override
     public Token deepcopy() {
-        return new IdToken(value());
+        return new IdToken(value(), _type);
     }
 
     @Override
