@@ -506,6 +506,29 @@ public class CoreModule extends Module {
                 result = Evaluator.eval(ast.get(i), tempEnv);
             return result;
         }));
+        _env.put("++", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            boolean flag = false;
+            for (Token arg : args)
+                if (DevoreType.check(arg.type(), "list") != Integer.MAX_VALUE) {
+                    flag = true;
+                    break;
+                }
+            if (flag) {
+                ListToken list = new VariableListToken();
+                for (Token arg : args) {
+                    if (DevoreType.check(arg.type(), "list") != Integer.MAX_VALUE)
+                        list.add((ListToken) arg);
+                    else
+                        list.add(arg);
+                }
+                return list;
+            } else {
+                StringBuilder builder = new StringBuilder();
+                for (Token arg : args)
+                    builder.append(arg.toString());
+                return new StringToken(builder.toString());
+            }
+        }, new String[]{"any"}, true));
         _env.put("map", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             ListToken result = new VariableListToken();
             ListToken tokens = (ListToken) args.get(1);
