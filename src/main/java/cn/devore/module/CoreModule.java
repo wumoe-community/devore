@@ -552,7 +552,7 @@ public class CoreModule extends Module {
         _env.put("string-last-index", BuiltinOrdinaryFunctionToken.make((args, env) ->
                 ((StringToken) args.get(0)).lastIndexOf((StringToken) args.get(1)), new String[]{"string", "string"}, false));
         _env.put("string-replace", BuiltinOrdinaryFunctionToken.make((args, env) ->
-                ((StringToken) args.get(0)).replace((StringToken) args.get(1), (StringToken) args.get(2)), new String[]{"string", "string"}, false));
+                ((StringToken) args.get(0)).replace((StringToken) args.get(1), (StringToken) args.get(2)), new String[]{"string", "string", "string"}, false));
         _env.put("string-substring", BuiltinOrdinaryFunctionToken.make((args, env) ->
                 ((StringToken) args.get(0)).substring((NumberToken) args.get(1), (NumberToken) args.get(2)), new String[]{"string", "int", "int"}, false));
         _env.put("->string", BuiltinOrdinaryFunctionToken.make((args, env) ->
