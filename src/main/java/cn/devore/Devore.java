@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.Map;
 
 public class Devore {
-    public static String _path = System.getProperty("user.dir");
-    public static PrintStream print = System.out;
-    public static InputStream input = System.in;
     public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
     public static final Ast AST_EMPTY = new Ast();
     public static final Map<String, Module> _module = new HashMap<>();
+    public static String _path = System.getProperty("user.dir");
+    public static PrintStream print = System.out;
+    public static InputStream input = System.in;
 
     static {
         _module.put("core", new CoreModule());
@@ -31,6 +31,7 @@ public class Devore {
     public static Env newDefaultEnv() {
         return new Env().load("core");
     }
+
     public static Token call(String code) {
         return call(code, newDefaultEnv());
     }

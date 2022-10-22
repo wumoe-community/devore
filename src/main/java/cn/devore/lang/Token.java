@@ -2,6 +2,7 @@ package cn.devore.lang;
 
 public abstract class Token {
     public abstract String type();
+
     public abstract Token deepcopy();
 
     public abstract boolean bool();

@@ -5,8 +5,6 @@ import cn.devore.lang.Env;
 import cn.devore.lang.Evaluator;
 import cn.devore.lang.Token;
 import cn.devore.lang.token.KeywordToken;
-import cn.devore.lang.token.list.ImmutableListToken;
-import cn.devore.lang.token.list.ListToken;
 import cn.devore.lang.token.list.VariableListToken;
 
 import java.util.ArrayList;
@@ -58,10 +56,9 @@ public class DevoreBaseOrdinaryFunctionToken extends OrdinaryFunctionToken {
             for (int i = _parameters.size() - 1; i < args.size(); ++i)
                 list.add(args.get(i));
             functionEnv.put(_parameters.get(_parameters.size() - 1), list.toImmutable());
-        } else {
+        } else
             for (int i = 0; i < _parameters.size(); ++i)
                 functionEnv.put(_parameters.get(i), args.get(i));
-        }
         Token result = KeywordToken.KEYWORD_NIL;
         for (Ast ast : _asts)
             result = Evaluator.eval(ast.copy(), functionEnv);

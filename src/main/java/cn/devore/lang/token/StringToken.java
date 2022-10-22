@@ -57,6 +57,7 @@ public class StringToken extends Token {
     public StringToken replace(StringToken regex, StringToken replacement) {
         return new StringToken(_str.replaceAll(regex._str, replacement._str));
     }
+
     @Override
     public boolean equiv(Token o) {
         return o instanceof StringToken && ((StringToken) o).value().equals(value());

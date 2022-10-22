@@ -1,22 +1,12 @@
 package cn.devore.lang;
 
-import cn.devore.error.DevoreAssert;
+import cn.devore.exception.DevoreAssert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class DevoreType {
-    private static class Neighbour {
-        int destination;
-        int weight;
-
-        Neighbour(int destination, int weight) {
-            this.destination = destination;
-            this.weight = weight;
-        }
-    }
-
     private static final ArrayList<ArrayList<Neighbour>> adjacencyList = new ArrayList<>();
     private static final List<String> _types = new ArrayList<>();
     private static int[][] distances;
@@ -165,5 +155,15 @@ public class DevoreType {
         addType("any", "undefined");
         addType("any", "function");
         apply();
+    }
+
+    private static class Neighbour {
+        int destination;
+        int weight;
+
+        Neighbour(int destination, int weight) {
+            this.destination = destination;
+            this.weight = weight;
+        }
     }
 }

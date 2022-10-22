@@ -1,4 +1,4 @@
-package cn.devore.error;
+package cn.devore.exception;
 
 public class DevoreAssert {
     public static void paperAssert(boolean condition, String message) {

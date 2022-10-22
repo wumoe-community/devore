@@ -1,7 +1,7 @@
 package cn.devore.parse;
 
 import cn.devore.Devore;
-import cn.devore.error.DevoreAssert;
+import cn.devore.exception.DevoreAssert;
 import cn.devore.lang.Ast;
 import cn.devore.lang.Token;
 import cn.devore.lang.token.IdToken;

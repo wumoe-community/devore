@@ -5,8 +5,8 @@ import cn.devore.lang.Token;
 import java.util.Objects;
 
 public class IdToken extends Token {
-    private final String _id;
     public final String _type;
+    private final String _id;
 
     public IdToken(String id, String type) {
         this._id = id;

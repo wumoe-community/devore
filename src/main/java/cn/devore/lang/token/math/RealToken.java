@@ -60,6 +60,14 @@ public class RealToken extends NumberToken {
         return new RealToken(new BigDecimal(val));
     }
 
+    private static BigDecimal ceil(BigDecimal val) {
+        return val.setScale(0, RoundingMode.CEILING);
+    }
+
+    private static BigDecimal floor(BigDecimal val) {
+        return val.setScale(0, RoundingMode.FLOOR);
+    }
+
     @Override
     public int toInt() {
         return _val.intValue();
@@ -171,7 +179,6 @@ public class RealToken extends NumberToken {
         return RealToken.valueOf(MathUtils.lcm(_val, other._val));
     }
 
-
     @Override
     public NumberToken negate() {
         return RealToken.valueOf(_val.negate());
@@ -269,7 +276,7 @@ public class RealToken extends NumberToken {
 
     @Override
     public String type() {
-        return (_val.signum() == 0 || _val.scale() <= 0 || _val.stripTrailingZeros().scale() <= 0)? "int": "real";
+        return (_val.signum() == 0 || _val.scale() <= 0 || _val.stripTrailingZeros().scale() <= 0) ? "int" : "real";
     }
 
     @Override
@@ -302,14 +309,6 @@ public class RealToken extends NumberToken {
     @Override
     public RealToken negOne() {
         return NEG_ONE;
-    }
-
-    private static BigDecimal ceil(BigDecimal val) {
-        return val.setScale(0, RoundingMode.CEILING);
-    }
-
-    private static BigDecimal floor(BigDecimal val) {
-        return val.setScale(0, RoundingMode.FLOOR);
     }
 
     @Override

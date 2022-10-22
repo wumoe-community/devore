@@ -1,19 +1,19 @@
 package cn.devore.module;
 
 import cn.devore.Devore;
-import cn.devore.error.DevoreAssert;
+import cn.devore.exception.DevoreAssert;
 import cn.devore.lang.*;
 import cn.devore.lang.token.*;
-import cn.devore.lang.token.math.ArithmeticToken;
-import cn.devore.lang.token.table.ImmutableTableToken;
-import cn.devore.lang.token.table.TableToken;
-import cn.devore.lang.token.table.VariableTableToken;
 import cn.devore.lang.token.function.*;
 import cn.devore.lang.token.list.ImmutableListToken;
 import cn.devore.lang.token.list.ListToken;
 import cn.devore.lang.token.list.VariableListToken;
+import cn.devore.lang.token.math.ArithmeticToken;
 import cn.devore.lang.token.math.NumberToken;
 import cn.devore.lang.token.math.RealToken;
+import cn.devore.lang.token.table.ImmutableTableToken;
+import cn.devore.lang.token.table.TableToken;
+import cn.devore.lang.token.table.VariableTableToken;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -26,6 +26,15 @@ import java.util.List;
 import java.util.Random;
 
 public class CoreModule extends Module {
+    private static void defSymbolRsc(Ast ast, String id, Ast value) {
+        if (ast.op() instanceof IdToken && id.equals(ast.op().toString())) {
+            ast.setOp(value.op());
+            ast.setChildren(value.children());
+        }
+        for (Ast child : ast.children())
+            defSymbolRsc(child, id, value);
+    }
+
     @Override
     public void init(Env _env) {
         _env.put("true", BoolToken.TRUE);
@@ -563,14 +572,5 @@ public class CoreModule extends Module {
                 RealToken.valueOf(args.get(0).toString()), new String[]{"any"}, false));
         _env.put("->int", BuiltinOrdinaryFunctionToken.make((args, env) ->
                 RealToken.valueOf(RealToken.valueOf(args.get(0).toString()).toInt()), new String[]{"any"}, false));
-    }
-
-    private static void defSymbolRsc(Ast ast, String id, Ast value) {
-        if (ast.op() instanceof IdToken && id.equals(ast.op().toString())) {
-            ast.setOp(value.op());
-            ast.setChildren(value.children());
-        }
-        for (Ast child : ast.children())
-            defSymbolRsc(child, id, value);
     }
 }

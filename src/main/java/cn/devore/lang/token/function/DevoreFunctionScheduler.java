@@ -1,9 +1,9 @@
 package cn.devore.lang.token.function;
 
-import cn.devore.error.DevoreAssert;
+import cn.devore.exception.DevoreAssert;
+import cn.devore.lang.DevoreType;
 import cn.devore.lang.Env;
 import cn.devore.lang.Token;
-import cn.devore.lang.DevoreType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,8 @@ public class DevoreFunctionScheduler extends Token {
     public Token call(List<Token> args, Env env) {
         int diff = Integer.MAX_VALUE;
         OrdinaryFunctionToken diffFunc = null;
-        funcScheduler: for (OrdinaryFunctionToken function : _functions) {
+        funcScheduler:
+        for (OrdinaryFunctionToken function : _functions) {
             if ((function._types.length == args.size())
                     || ((function._variadic) && (args.size() >= function._types.length - 1))) {
                 int diffing = 0;

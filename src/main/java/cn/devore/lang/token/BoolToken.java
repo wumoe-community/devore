@@ -7,12 +7,12 @@ public class BoolToken extends Token {
     public static final BoolToken FALSE = new BoolToken(false);
     private final boolean _bool;
 
-    public static BoolToken valueOf(boolean bool) {
-        return bool ? TRUE : FALSE;
-    }
-
     private BoolToken(boolean bool) {
         this._bool = bool;
+    }
+
+    public static BoolToken valueOf(boolean bool) {
+        return bool ? TRUE : FALSE;
     }
 
     @Override
