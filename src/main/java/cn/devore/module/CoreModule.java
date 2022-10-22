@@ -59,39 +59,39 @@ public class CoreModule extends Module {
         })));
         _env.put("range", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             List<Token> list = new ArrayList<>();
-            switch (args.size()) {
-                case 1 -> {
-                    ArithmeticToken end = (ArithmeticToken) args.get(0);
-                    for(ArithmeticToken i = RealToken.ZERO; i.compareTo(end) < 0; i = i.add(RealToken.ONE))
-                        list.add(i);
-                }
-                case 2 -> {
-                    ArithmeticToken start = (ArithmeticToken) args.get(0);
-                    ArithmeticToken end = (ArithmeticToken) args.get(1);
-                    for(ArithmeticToken i = start; i.compareTo(end) < 0; i = i.add(RealToken.ONE))
-                        list.add(i);
-                }
-                default -> {
-                    ArithmeticToken start = (ArithmeticToken) args.get(0);
-                    ArithmeticToken end = (ArithmeticToken) args.get(1);
-                    ArithmeticToken step = (ArithmeticToken) args.get(2);
-                    ArithmeticToken size = end.sub(start).div(step);
-                    for(ArithmeticToken i = RealToken.ZERO; i.compareTo(size) < 0; i = i.add(RealToken.ONE))
-                        list.add(start.add(i.mul(step)));
-                }
-            }
+            ArithmeticToken end = (ArithmeticToken) args.get(0);
+            for (ArithmeticToken i = RealToken.ZERO; i.compareTo(end) < 0; i = i.add(RealToken.ONE))
+                list.add(i);
             return new ImmutableListToken(list);
-        }, new String[]{"int"}, true));
+        }, new String[]{"int"}, false));
+        _env.put("range", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            List<Token> list = new ArrayList<>();
+            ArithmeticToken start = (ArithmeticToken) args.get(0);
+            ArithmeticToken end = (ArithmeticToken) args.get(1);
+            for (ArithmeticToken i = start; i.compareTo(end) < 0; i = i.add(RealToken.ONE))
+                list.add(i);
+            return new ImmutableListToken(list);
+        }, new String[]{"int", "int"}, false));
+        _env.put("range", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            List<Token> list = new ArrayList<>();
+            ArithmeticToken start = (ArithmeticToken) args.get(0);
+            ArithmeticToken end = (ArithmeticToken) args.get(1);
+            ArithmeticToken step = (ArithmeticToken) args.get(2);
+            ArithmeticToken size = end.sub(start).div(step);
+            for (ArithmeticToken i = RealToken.ZERO; i.compareTo(size) < 0; i = i.add(RealToken.ONE))
+                list.add(start.add(i.mul(step)));
+            return new ImmutableListToken(list);
+        }, new String[]{"int", "int", "int"}, false));
         _env.put("random", BuiltinOrdinaryFunctionToken.make((args, env) -> {
-            BigInteger rangeStart = args.size() == 1? BigInteger.ZERO : ((NumberToken) args.get(0)).toBigInteger();
-            BigInteger rangeEnd = ((NumberToken) args.get(args.size() == 1? 0: 1)).toBigInteger();
+            BigInteger rangeStart = BigInteger.ZERO;
+            BigInteger rangeEnd = ((NumberToken) args.get(0)).toBigInteger();
             Random rand = new Random();
             int scale = rangeEnd.toString().length();
             StringBuilder generated = new StringBuilder();
-            for(int i = 0; i < rangeEnd.toString().length(); ++i)
+            for (int i = 0; i < rangeEnd.toString().length(); ++i)
                 generated.append(rand.nextInt(10));
             BigDecimal inputRangeStart = new BigDecimal("0").setScale(scale, RoundingMode.FLOOR);
-            BigDecimal inputRangeEnd = new BigDecimal(String.format("%0" + (rangeEnd.toString().length()) +  "d", 0)
+            BigDecimal inputRangeEnd = new BigDecimal(String.format("%0" + (rangeEnd.toString().length()) + "d", 0)
                     .replace('0', '9')).setScale(scale, RoundingMode.FLOOR);
             BigDecimal outputRangeStart = new BigDecimal(rangeStart).setScale(scale, RoundingMode.FLOOR);
             BigDecimal outputRangeEnd = new BigDecimal(rangeEnd).add(new BigDecimal("1")).setScale(scale, RoundingMode.FLOOR);
@@ -105,7 +105,31 @@ public class CoreModule extends Module {
             BigInteger returnInteger = bd6.setScale(0, RoundingMode.FLOOR).toBigInteger();
             returnInteger = (returnInteger.compareTo(rangeEnd) > 0 ? rangeEnd : returnInteger);
             return RealToken.valueOf(returnInteger);
-        }, new String[]{"int"}, true));
+        }, new String[]{"int"}, false));
+        _env.put("random", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            BigInteger rangeStart = ((NumberToken) args.get(0)).toBigInteger();
+            BigInteger rangeEnd = ((NumberToken) args.get(1)).toBigInteger();
+            Random rand = new Random();
+            int scale = rangeEnd.toString().length();
+            StringBuilder generated = new StringBuilder();
+            for (int i = 0; i < rangeEnd.toString().length(); ++i)
+                generated.append(rand.nextInt(10));
+            BigDecimal inputRangeStart = new BigDecimal("0").setScale(scale, RoundingMode.FLOOR);
+            BigDecimal inputRangeEnd = new BigDecimal(String.format("%0" + (rangeEnd.toString().length()) + "d", 0)
+                    .replace('0', '9')).setScale(scale, RoundingMode.FLOOR);
+            BigDecimal outputRangeStart = new BigDecimal(rangeStart).setScale(scale, RoundingMode.FLOOR);
+            BigDecimal outputRangeEnd = new BigDecimal(rangeEnd).add(new BigDecimal("1")).setScale(scale, RoundingMode.FLOOR);
+            BigDecimal bd1 = new BigDecimal(new BigInteger(generated.toString()))
+                    .setScale(scale, RoundingMode.FLOOR).subtract(inputRangeStart);
+            BigDecimal bd2 = inputRangeEnd.subtract(inputRangeStart);
+            BigDecimal bd3 = bd1.divide(bd2, RoundingMode.FLOOR);
+            BigDecimal bd4 = outputRangeEnd.subtract(outputRangeStart);
+            BigDecimal bd5 = bd3.multiply(bd4);
+            BigDecimal bd6 = bd5.add(outputRangeStart);
+            BigInteger returnInteger = bd6.setScale(0, RoundingMode.FLOOR).toBigInteger();
+            returnInteger = (returnInteger.compareTo(rangeEnd) > 0 ? rangeEnd : returnInteger);
+            return RealToken.valueOf(returnInteger);
+        }, new String[]{"int", "int"}, false));
         _env.put("println", BuiltinOrdinaryFunctionToken.make(((args, env) -> {
             StringBuilder builder = new StringBuilder();
             args.forEach(builder::append);
