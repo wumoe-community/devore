@@ -514,14 +514,14 @@ public class CoreModule extends Module {
                     break;
                 }
             if (flag) {
-                ListToken list = new VariableListToken();
+                VariableListToken list = new VariableListToken();
                 for (Token arg : args) {
                     if (DevoreType.check(arg.type(), "list") != Integer.MAX_VALUE)
                         list.add((ListToken) arg);
                     else
                         list.add(arg);
                 }
-                return list;
+                return list.toImmutable();
             } else {
                 StringBuilder builder = new StringBuilder();
                 for (Token arg : args)
@@ -530,7 +530,7 @@ public class CoreModule extends Module {
             }
         }, new String[]{"any"}, true));
         _env.put("map", BuiltinOrdinaryFunctionToken.make((args, env) -> {
-            ListToken result = new VariableListToken();
+            VariableListToken result = new VariableListToken();
             ListToken tokens = (ListToken) args.get(1);
             for (int i = 0; i < tokens.size(); ++i) {
                 List<Token> parameters = new ArrayList<>();
@@ -542,7 +542,7 @@ public class CoreModule extends Module {
                     ast.add(new Ast(parameter));
                 result.add(Evaluator.eval(ast, env.createChild()));
             }
-            return result;
+            return result.toImmutable();
         }, new String[]{"function", "list", "list"}, true));
         _env.put("for-each", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             ListToken tokens = (ListToken) args.get(1);
@@ -558,6 +558,39 @@ public class CoreModule extends Module {
             }
             return KeywordToken.KEYWORD_NIL;
         }, new String[]{"function", "list", "list"}, true));
+        _env.put("foldr", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            Token result = args.get(1);
+            ListToken tokens = (ListToken) args.get(2);
+            for (int i = tokens.size() - 1; i >= 0; --i) {
+                Ast ast = new Ast(args.get(0));
+                ast.add(new Ast(tokens.get(i)));
+                ast.add(new Ast(result));
+                result = Evaluator.eval(ast, env.createChild());
+            }
+            return result;
+        }, new String[]{"function", "any", "list"}, false));
+        _env.put("foldl", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            Token result = args.get(1);
+            ListToken list = (ListToken) args.get(2);
+            for (int i = list.size() - 1; i >= 0; --i) {
+                Ast ast = new Ast(args.get(0));
+                ast.add(new Ast(result));
+                ast.add(new Ast(list.get(i)));
+                result = Evaluator.eval(ast, env.createChild());
+            }
+            return result;
+        }, new String[]{"function", "any", "list"}, false));
+        _env.put("filter", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            VariableListToken result = new VariableListToken();
+            ListToken tokens = (ListToken) args.get(1);
+            for (int i = 0; i < tokens.size(); ++i) {
+                Ast ast = new Ast(args.get(0));
+                ast.add(new Ast(tokens.get(i)));
+                if (Evaluator.eval(ast, env.createChild()).bool())
+                    result.add(tokens.get(i));
+            }
+            return result.toImmutable();
+        }, new String[]{"function", "list"}, false));
         _env.put("sin", BuiltinOrdinaryFunctionToken.make((args, env) ->
                 ((NumberToken) args.get(0)).sin(), new String[]{"num"}, false));
         _env.put("cos", BuiltinOrdinaryFunctionToken.make((args, env) ->
