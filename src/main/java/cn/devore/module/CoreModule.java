@@ -350,11 +350,13 @@ public class CoreModule extends Module {
             Token condition = Evaluator.eval(ast.get(0).copy(), newEnv);
             while (condition.bool()) {
                 for (int i = 1; i < ast.size(); ++i)
-                    result =  Evaluator.eval(ast.get(i).copy(), newEnv);
+                    result = Evaluator.eval(ast.get(i).copy(), newEnv);
                 condition = Evaluator.eval(ast.get(0).copy(), newEnv);
             }
             return result;
         })));
+        _env.put("type?", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                new StringToken(args.get(0).type()), new String[]{"any"}, false));
         _env.put("apply", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             List<Token> tokens = new ArrayList<>();
             for (int i = 1; i < args.size(); ++i)
