@@ -7,6 +7,7 @@ import cn.devore.lang.Token;
 import cn.devore.lang.token.KeywordToken;
 import cn.devore.lang.token.list.ImmutableListToken;
 import cn.devore.lang.token.list.ListToken;
+import cn.devore.lang.token.list.VariableListToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,10 +54,10 @@ public class DevoreBaseOrdinaryFunctionToken extends OrdinaryFunctionToken {
         if (_variadic) {
             for (int i = 0; i < _parameters.size() - 1; ++i)
                 functionEnv.put(_parameters.get(i), args.get(i));
-            ListToken list = new ImmutableListToken();
+            VariableListToken list = new VariableListToken();
             for (int i = _parameters.size() - 1; i < args.size(); ++i)
                 list.add(args.get(i));
-            functionEnv.put(_parameters.get(_parameters.size() - 1), list);
+            functionEnv.put(_parameters.get(_parameters.size() - 1), list.toImmutable());
         } else {
             for (int i = 0; i < _parameters.size(); ++i)
                 functionEnv.put(_parameters.get(i), args.get(i));

@@ -20,6 +20,10 @@ public class ImmutableListToken extends ListToken {
         _list.addAll(list);
     }
 
+    public VariableListToken toVariable() {
+        return new VariableListToken(_list);
+    }
+
     public ImmutableListToken copy() {
         ImmutableListToken list = new ImmutableListToken();
         for (int i = 0; i < size(); ++i)

@@ -12,7 +12,15 @@ public class ImmutableTableToken extends TableToken {
     private final Map<Token, Token> _table;
 
     public ImmutableTableToken() {
-        this._table = new HashMap<>();
+        this(new HashMap<>());
+    }
+
+    public ImmutableTableToken(Map<Token, Token> table) {
+        this._table = table;
+    }
+
+    public VariableTableToken toVariable() {
+        return new VariableTableToken(_table);
     }
 
     public ImmutableTableToken copy() {

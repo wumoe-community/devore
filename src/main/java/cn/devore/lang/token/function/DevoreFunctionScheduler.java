@@ -1,5 +1,6 @@
 package cn.devore.lang.token.function;
 
+import cn.devore.error.DevoreAssert;
 import cn.devore.lang.Env;
 import cn.devore.lang.Token;
 import cn.devore.lang.token.KeywordToken;
@@ -49,8 +50,7 @@ public class DevoreFunctionScheduler extends Token {
                 }
             }
         }
-        if (diff == Integer.MAX_VALUE)
-            return KeywordToken.KEYWORD_NIL;
+        DevoreAssert.runtimeAssert(diff != Integer.MAX_VALUE, "No matching function found.");
         return diffFunc.call(args, env);
     }
 

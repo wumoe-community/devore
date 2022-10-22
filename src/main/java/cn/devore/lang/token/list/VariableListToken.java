@@ -20,6 +20,10 @@ public class VariableListToken extends ListToken {
         _list.addAll(list);
     }
 
+    public ImmutableListToken toImmutable() {
+        return new ImmutableListToken(_list);
+    }
+
     @Override
     public String type() {
         return "variable_list";

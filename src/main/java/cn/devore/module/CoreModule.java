@@ -1,10 +1,8 @@
 package cn.devore.module;
 
 import cn.devore.Devore;
-import cn.devore.lang.Ast;
-import cn.devore.lang.Env;
-import cn.devore.lang.Evaluator;
-import cn.devore.lang.Token;
+import cn.devore.error.DevoreAssert;
+import cn.devore.lang.*;
 import cn.devore.lang.token.*;
 import cn.devore.lang.token.math.ArithmeticToken;
 import cn.devore.lang.token.table.ImmutableTableToken;
@@ -33,6 +31,68 @@ public class CoreModule extends Module {
         _env.put("true", BoolToken.TRUE);
         _env.put("false", BoolToken.FALSE);
         _env.put("nil", KeywordToken.KEYWORD_NIL);
+        _env.put("let", BuiltinSpecialFunctionToken.make(((ast, env) -> {
+            Env newEnv = env.createChild();
+            Token result = KeywordToken.KEYWORD_NIL;
+            for (Ast node : ast.get(0).children()) {
+                if ("apply".equals(node.op().toString())) {
+                    List<String> parameters = new ArrayList<>();
+                    String[] paramTypes = new String[node.get(0).size()];
+                    for (int i = 0; i < node.get(0).size(); ++i) {
+                        parameters.add(node.get(0).get(i).op().toString());
+                        paramTypes[i] = ((IdToken) node.get(0).get(i).op())._type;
+                    }
+                    List<Ast> asts = new ArrayList<>();
+                    for (int i = 1; i < node.size(); ++i)
+                        asts.add(node.get(i).copy());
+                    newEnv.put(node.get(0).op().toString(),
+                            DevoreBaseOrdinaryFunctionToken.make(asts, parameters, paramTypes, false));
+                } else {
+                    Token value = KeywordToken.KEYWORD_NIL;
+                    for (Ast e : node.children())
+                        value = Evaluator.eval(e.copy(), env.createChild());
+                    String type = ((IdToken) node.op())._type;
+                    DevoreAssert.typeAssert(
+                            DevoreType.path(value.type(), type) != Integer.MAX_VALUE,
+                            value.type() + " not is " + type);
+                    newEnv.put(node.op().toString(), value);
+                }
+            }
+            for (int i = 1; i < ast.size(); ++i)
+                result = Evaluator.eval(ast.get(i).copy(), newEnv.createChild());
+            return result;
+        })));
+        _env.put("let*", BuiltinSpecialFunctionToken.make(((ast, env) -> {
+            Env newEnv = env.createChild();
+            Token result = KeywordToken.KEYWORD_NIL;
+            for (Ast node : ast.get(0).children()) {
+                if ("apply".equals(node.op().toString())) {
+                    List<String> parameters = new ArrayList<>();
+                    String[] paramTypes = new String[node.get(0).size()];
+                    for (int i = 0; i < node.get(0).size(); ++i) {
+                        parameters.add(node.get(0).get(i).op().toString());
+                        paramTypes[i] = ((IdToken) node.get(0).get(i).op())._type;
+                    }
+                    List<Ast> asts = new ArrayList<>();
+                    for (int i = 1; i < node.size(); ++i)
+                        asts.add(node.get(i).copy());
+                    newEnv.put(node.get(0).op().toString(),
+                            DevoreBaseOrdinaryFunctionToken.make(asts, parameters, paramTypes, false));
+                } else {
+                    Token value = KeywordToken.KEYWORD_NIL;
+                    for (Ast e : node.children())
+                        value = Evaluator.eval(e.copy(), newEnv.createChild());
+                    String type = ((IdToken) node.op())._type;
+                    DevoreAssert.typeAssert(
+                            DevoreType.path(value.type(), type) != Integer.MAX_VALUE,
+                            value + " not is " + type);
+                    newEnv.put(node.op().toString(), value);
+                }
+            }
+            for (int i = 1; i < ast.size(); ++i)
+                result = Evaluator.eval(ast.get(i).copy(), newEnv.createChild());
+            return result;
+        })));
         _env.put("cond", BuiltinSpecialFunctionToken.make(((ast, env) -> {
             for (int i = 0; i < ast.size(); ++i) {
                 Env tempEnv = env.createChild();
@@ -368,6 +428,35 @@ public class CoreModule extends Module {
                 result = Evaluator.eval(ast.get(i), tempEnv);
             return result;
         }));
+        _env.put("map", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            ListToken result = new VariableListToken();
+            ListToken tokens = (ListToken) args.get(1);
+            for (int i = 0; i < tokens.size(); ++i) {
+                List<Token> parameters = new ArrayList<>();
+                parameters.add(tokens.get(i));
+                for (int j = 2; j < args.size(); ++j)
+                    parameters.add(((ListToken) args.get(j)).get(i));
+                Ast ast = new Ast(args.get(0));
+                for (Token parameter : parameters)
+                    ast.add(new Ast(parameter));
+                result.add(Evaluator.eval(ast, env.createChild()));
+            }
+            return result;
+        }, new String[]{"function", "list", "list"}, true));
+        _env.put("for-each", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            ListToken tokens = (ListToken) args.get(1);
+            for (int i = 0; i < tokens.size(); ++i) {
+                List<Token> parameters = new ArrayList<>();
+                parameters.add(tokens.get(i));
+                for (int j = 2; j < args.size(); ++j)
+                    parameters.add(((ListToken) args.get(j)).get(i));
+                Ast ast = new Ast(args.get(0));
+                for (Token parameter : parameters)
+                    ast.add(new Ast(parameter));
+                Evaluator.eval(ast, env.createChild());
+            }
+            return KeywordToken.KEYWORD_NIL;
+        }, new String[]{"function", "list", "list"}, true));
         _env.put("sin", BuiltinOrdinaryFunctionToken.make((args, env) ->
                 ((NumberToken) args.get(0)).sin(), new String[]{"num"}, false));
         _env.put("cos", BuiltinOrdinaryFunctionToken.make((args, env) ->
@@ -466,9 +555,14 @@ public class CoreModule extends Module {
                 ((StringToken) args.get(0)).replace((StringToken) args.get(1), (StringToken) args.get(2)), new String[]{"string", "string"}, false));
         _env.put("string-substring", BuiltinOrdinaryFunctionToken.make((args, env) ->
                 ((StringToken) args.get(0)).substring((NumberToken) args.get(1), (NumberToken) args.get(2)), new String[]{"string", "int", "int"}, false));
-        _env.put("->string", BuiltinOrdinaryFunctionToken.make((args, env) -> new StringToken(args.get(0).toString()), new String[]{"any"}, false));
-        _env.put("->bool", BuiltinOrdinaryFunctionToken.make((args, env) -> BoolToken.valueOf(args.get(0).bool()), new String[]{"any"}, false));
-        _env.put("->real", BuiltinOrdinaryFunctionToken.make((args, env) -> RealToken.valueOf(args.get(0).toString()), new String[]{"any"}, false));
+        _env.put("->string", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                new StringToken(args.get(0).toString()), new String[]{"any"}, false));
+        _env.put("->bool", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                BoolToken.valueOf(args.get(0).bool()), new String[]{"any"}, false));
+        _env.put("->real", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                RealToken.valueOf(args.get(0).toString()), new String[]{"any"}, false));
+        _env.put("->int", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                RealToken.valueOf(RealToken.valueOf(args.get(0).toString()).toInt()), new String[]{"any"}, false));
     }
 
     private static void defSymbolRsc(Ast ast, String id, Ast value) {
