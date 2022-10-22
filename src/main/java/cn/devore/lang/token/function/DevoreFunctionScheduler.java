@@ -19,6 +19,12 @@ public class DevoreFunctionScheduler extends Token {
         this(new ArrayList<>());
     }
 
+    private static int valueAdd(int v1, int v2) {
+        if (v1 == Integer.MAX_VALUE || v2 == Integer.MIN_VALUE)
+            return Integer.MAX_VALUE;
+        return v1 + v2;
+    }
+
     public DevoreFunctionScheduler addFunction(OrdinaryFunctionToken function) {
         this._functions.add(function);
         return this;
@@ -52,12 +58,6 @@ public class DevoreFunctionScheduler extends Token {
         }
         DevoreAssert.runtimeAssert(diff != Integer.MAX_VALUE, "No matching function found.");
         return diffFunc.call(args, env);
-    }
-
-    private static int valueAdd(int v1, int v2) {
-        if (v1 == Integer.MAX_VALUE || v2 == Integer.MIN_VALUE)
-            return Integer.MAX_VALUE;
-        return v1 + v2;
     }
 
     @Override
