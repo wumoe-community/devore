@@ -294,6 +294,20 @@ public class CoreModule extends Module {
             _env.put(key, value);
             return KeywordToken.KEYWORD_NIL;
         }));
+        _env.put("def-variadic", BuiltinSpecialFunctionToken.make((ast, env) -> {
+            String key = ast.get(0).op().toString();
+            List<String> parameters = new ArrayList<>();
+            String[] types = new String[ast.get(0).size()];
+            List<Ast> asts = new ArrayList<>();
+            for (int i = 0; i < ast.get(0).size(); ++i) {
+                parameters.add(ast.get(0).get(i).op().toString());
+                types[i] = ((IdToken) ast.get(0).get(i).op())._type;
+            }
+            for (int i = 1; i < ast.size(); ++i)
+                asts.add(ast.get(i).copy());
+            _env.put(key, DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, true));
+            return KeywordToken.KEYWORD_NIL;
+        }));
         _env.put("set!", BuiltinSpecialFunctionToken.make((ast, env) -> {
             String key = ast.get(0).op().toString();
             Token value = KeywordToken.KEYWORD_NIL;
@@ -314,6 +328,20 @@ public class CoreModule extends Module {
                 value = DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, false);
             }
             _env.set(key, value);
+            return KeywordToken.KEYWORD_NIL;
+        }));
+        _env.put("set-variadic!", BuiltinSpecialFunctionToken.make((ast, env) -> {
+            String key = ast.get(0).op().toString();
+            List<String> parameters = new ArrayList<>();
+            String[] types = new String[ast.get(0).size()];
+            List<Ast> asts = new ArrayList<>();
+            for (int i = 0; i < ast.get(0).size(); ++i) {
+                parameters.add(ast.get(0).get(i).op().toString());
+                types[i] = ((IdToken) ast.get(0).get(i).op())._type;
+            }
+            for (int i = 1; i < ast.size(); ++i)
+                asts.add(ast.get(i).copy());
+            _env.set(key, DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, true));
             return KeywordToken.KEYWORD_NIL;
         }));
         _env.put("apply", BuiltinOrdinaryFunctionToken.make((args, env) -> {

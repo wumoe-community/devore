@@ -63,8 +63,8 @@ public class Env {
 
     public void put(String key, Token value) {
         if (value instanceof OrdinaryFunctionToken)
-            if (contains(key)) {
-                ((DevoreFunctionScheduler) get(key)).addFunction((OrdinaryFunctionToken) value);
+            if (_env.containsKey(key)) {
+                ((DevoreFunctionScheduler) _env.get(key)).addFunction((OrdinaryFunctionToken) value);
             } else
                 _env.put(key, new DevoreFunctionScheduler().addFunction((OrdinaryFunctionToken) value));
         else
