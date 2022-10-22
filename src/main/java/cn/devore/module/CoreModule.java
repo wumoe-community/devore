@@ -441,6 +441,20 @@ public class CoreModule extends Module {
                 return result;
             }
         }));
+        _env.put("not", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                args.get(0).bool() ? BoolToken.FALSE : BoolToken.TRUE, new String[]{"bool"}, false));
+        _env.put("and", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            for (Token arg : args)
+                if (!arg.bool())
+                    return BoolToken.FALSE;
+            return BoolToken.TRUE;
+        }, new String[]{"bool"}, true));
+        _env.put("or", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            for (Token arg : args)
+                if (arg.bool())
+                    return BoolToken.TRUE;
+            return BoolToken.FALSE;
+        }, new String[]{"bool"}, true));
         _env.put(">", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             ComparableToken temp = (ComparableToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
