@@ -16,6 +16,7 @@ public class DevoreType {
             this.weight = weight;
         }
     }
+
     private static final ArrayList<ArrayList<Neighbour>> adjacencyList = new ArrayList<>();
     private static final List<String> _types = new ArrayList<>();
     private static int[][] distances;
