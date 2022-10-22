@@ -211,7 +211,7 @@ public class Lexer {
                 }
                 String s = builder.toString();
                 String _id = s;
-                String _type = "undefined";
+                String _type = "any";
                 if (s.contains(":")) {
                     int inOf = s.indexOf(":");
                     _id = s.substring(0, inOf);
