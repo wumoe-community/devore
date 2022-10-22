@@ -105,14 +105,10 @@ public class DevoreType {
         _types.add(name);
     }
 
-    public static boolean contains(String name) {
-        return _types.contains(name);
-    }
-
     public static void addType(String name, String child) {
-        if (!contains(name))
+        if (!_types.contains(name))
             addType(name);
-        if (!contains(child))
+        if (!_types.contains(child))
             addType(child);
         paternity(name, child);
     }
