@@ -344,6 +344,17 @@ public class CoreModule extends Module {
             _env.set(key, DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, true));
             return KeywordToken.KEYWORD_NIL;
         }));
+        _env.put("while", BuiltinSpecialFunctionToken.make(((ast, env) -> {
+            Env newEnv = env.createChild();
+            Token result = KeywordToken.KEYWORD_NIL;
+            Token condition = Evaluator.eval(ast.get(0).copy(), newEnv);
+            while (condition.bool()) {
+                for (int i = 1; i < ast.size(); ++i)
+                    result =  Evaluator.eval(ast.get(i).copy(), newEnv);
+                condition = Evaluator.eval(ast.get(0).copy(), newEnv);
+            }
+            return result;
+        })));
         _env.put("apply", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             List<Token> tokens = new ArrayList<>();
             for (int i = 1; i < args.size(); ++i)
