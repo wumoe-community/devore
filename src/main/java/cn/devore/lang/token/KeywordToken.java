@@ -21,7 +21,7 @@ public class KeywordToken extends Token {
 
     @Override
     public String type() {
-        return null;
+        return this.type == NIL ? "nil" : "undefined";
     }
 
     @Override
