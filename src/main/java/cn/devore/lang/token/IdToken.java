@@ -14,7 +14,7 @@ public class IdToken extends Token {
     }
 
     public IdToken(String id) {
-        this(id, "undefined");
+        this(id, "any");
     }
 
     public String value() {
