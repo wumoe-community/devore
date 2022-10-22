@@ -358,17 +358,10 @@ public class CoreModule extends Module {
         _env.put("type?", BuiltinOrdinaryFunctionToken.make((args, env) ->
                 new StringToken(args.get(0).type()), new String[]{"any"}, false));
         _env.put("apply", BuiltinOrdinaryFunctionToken.make((args, env) -> {
-            List<Token> tokens = new ArrayList<>();
+            Ast ast = new Ast(args.get(0));
             for (int i = 1; i < args.size(); ++i)
-                tokens.add(args.get(i));
-            Ast asts = new Ast();
-            if (args.get(0) instanceof DevoreFunctionScheduler functionScheduler)
-                return functionScheduler.call(tokens, env);
-            for (Token token : tokens)
-                asts.add(new Ast(token));
-            if (args.get(0) instanceof SpecialFunctionToken specialFunc)
-                return specialFunc.call(asts, env);
-            return KeywordToken.KEYWORD_NIL;
+                ast.add(new Ast(args.get(i)));
+            return Evaluator.eval(ast, env);
         }, new String[]{"function", "any"}, true));
         _env.put("apply-list", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             List<Token> tokens = new ArrayList<>();
@@ -412,18 +405,18 @@ public class CoreModule extends Module {
         }, new String[]{"string"}, false));
         _env.put("lambda", BuiltinSpecialFunctionToken.make((ast, env) -> {
             List<String> parameters = new ArrayList<>();
-            String[] types = new String[ast.get(0).size()];
+            String[] types = new String[ast.get(0).size() + 1];
             List<Ast> asts = new ArrayList<>();
             Token parameter = ast.get(0).op();
             if (!KeywordToken.KEYWORD_EMPTY.equiv(parameter)) {
-                parameters.add(parameter.toString());
                 types[parameters.size()] = ((IdToken) parameter)._type;
+                parameters.add(parameter.toString());
             }
             for (int i = 0; i < ast.get(0).size(); ++i) {
                 parameter = ast.get(0).get(i).op();
                 if (!KeywordToken.KEYWORD_EMPTY.equiv(parameter)) {
-                    parameters.add(parameter.toString());
                     types[parameters.size()] = ((IdToken) parameter)._type;
+                    parameters.add(parameter.toString());
                 }
             }
             for (int i = 1; i < ast.size(); ++i)

@@ -1,6 +1,7 @@
 package cn.devore.lang;
 
 import cn.devore.lang.token.IdToken;
+import cn.devore.lang.token.function.DevoreBaseOrdinaryFunctionToken;
 import cn.devore.lang.token.function.DevoreFunctionScheduler;
 import cn.devore.lang.token.function.OrdinaryFunctionToken;
 import cn.devore.lang.token.function.SpecialFunctionToken;
@@ -32,6 +33,14 @@ public class Evaluator {
             for (int i = 0; i < ast.size(); ++i)
                 args.add(ast.get(i).op());
             ast.setOp(((DevoreFunctionScheduler) ast.op()).call(args, env));
+            ast.clear();
+        } else if (ast.op() instanceof DevoreBaseOrdinaryFunctionToken) {
+            for (int i = 0; i < ast.size(); ++i)
+                ast.get(i).setOp(eval(ast.get(i).copy(), env));
+            List<Token> args = new ArrayList<>();
+            for (int i = 0; i < ast.size(); ++i)
+                args.add(ast.get(i).op());
+            ast.setOp(((DevoreBaseOrdinaryFunctionToken) ast.op()).call(args, env));
             ast.clear();
         }
         return ast.op();
