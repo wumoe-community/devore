@@ -30,6 +30,10 @@ public class DevoreFunctionScheduler extends Token {
         return this;
     }
 
+    public List<OrdinaryFunctionToken> getFunctions() {
+        return _functions;
+    }
+
     public Token call(List<Token> args, Env env) {
         int diff = Integer.MAX_VALUE;
         OrdinaryFunctionToken diffFunc = null;
@@ -56,6 +60,8 @@ public class DevoreFunctionScheduler extends Token {
                 }
             }
         }
+        if (diff == Integer.MAX_VALUE)
+            System.out.println();
         DevoreAssert.runtimeAssert(diff != Integer.MAX_VALUE, "No matching function found.");
         return diffFunc.call(args, env);
     }

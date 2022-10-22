@@ -55,7 +55,7 @@ public class CoreModule extends Module {
                     for (int i = 1; i < node.size(); ++i)
                         asts.add(node.get(i).copy());
                     newEnv.put(node.get(0).op().toString(),
-                            DevoreBaseOrdinaryFunctionToken.make(asts, parameters, paramTypes, false));
+                            DevoreBaseOrdinaryFunctionToken.make(asts, parameters, paramTypes, false, env));
                 } else {
                     Token value = KeywordToken.KEYWORD_NIL;
                     for (Ast e : node.children())
@@ -86,7 +86,7 @@ public class CoreModule extends Module {
                     for (int i = 1; i < node.size(); ++i)
                         asts.add(node.get(i).copy());
                     newEnv.put(node.get(0).op().toString(),
-                            DevoreBaseOrdinaryFunctionToken.make(asts, parameters, paramTypes, false));
+                            DevoreBaseOrdinaryFunctionToken.make(asts, parameters, paramTypes, false, env));
                 } else {
                     Token value = KeywordToken.KEYWORD_NIL;
                     for (Ast e : node.children())
@@ -216,7 +216,7 @@ public class CoreModule extends Module {
             for (int i = 1; i < args.size(); ++i)
                 arithmetic = arithmetic.add((ArithmeticToken) args.get(i));
             return arithmetic;
-        }), new String[]{"arithmetic"}, true));
+        }), new String[]{"arithmetic", "arithmetic"}, true));
         _env.put("-", BuiltinOrdinaryFunctionToken.make(((args, env) -> {
             ArithmeticToken arithmetic = (ArithmeticToken) args.get(0);
             if (arithmetic instanceof NumberToken && args.size() == 1)
@@ -224,19 +224,19 @@ public class CoreModule extends Module {
             for (int i = 1; i < args.size(); ++i)
                 arithmetic = arithmetic.sub((ArithmeticToken) args.get(i));
             return arithmetic;
-        }), new String[]{"arithmetic"}, true));
+        }), new String[]{"arithmetic", "arithmetic"}, true));
         _env.put("*", BuiltinOrdinaryFunctionToken.make(((args, env) -> {
             ArithmeticToken arithmetic = (ArithmeticToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
                 arithmetic = arithmetic.mul((ArithmeticToken) args.get(i));
             return arithmetic;
-        }), new String[]{"arithmetic"}, true));
+        }), new String[]{"arithmetic", "arithmetic"}, true));
         _env.put("/", BuiltinOrdinaryFunctionToken.make(((args, env) -> {
             ArithmeticToken arithmetic = (ArithmeticToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
                 arithmetic = arithmetic.div((ArithmeticToken) args.get(i));
             return arithmetic;
-        }), new String[]{"arithmetic"}, true));
+        }), new String[]{"arithmetic", "arithmetic"}, true));
         _env.put("undef", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             for (Token token : args)
                 env.remove(token.toString());
@@ -289,7 +289,7 @@ public class CoreModule extends Module {
                 }
                 for (int i = 1; i < ast.size(); ++i)
                     asts.add(ast.get(i).copy());
-                value = DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, false);
+                value = DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, false, env);
             }
             _env.put(key, value);
             return KeywordToken.KEYWORD_NIL;
@@ -305,7 +305,7 @@ public class CoreModule extends Module {
             }
             for (int i = 1; i < ast.size(); ++i)
                 asts.add(ast.get(i).copy());
-            _env.put(key, DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, true));
+            _env.put(key, DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, true, env));
             return KeywordToken.KEYWORD_NIL;
         }));
         _env.put("set!", BuiltinSpecialFunctionToken.make((ast, env) -> {
@@ -325,7 +325,7 @@ public class CoreModule extends Module {
                 }
                 for (int i = 1; i < ast.size(); ++i)
                     asts.add(ast.get(i).copy());
-                value = DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, false);
+                value = DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, false, env);
             }
             _env.set(key, value);
             return KeywordToken.KEYWORD_NIL;
@@ -341,7 +341,7 @@ public class CoreModule extends Module {
             }
             for (int i = 1; i < ast.size(); ++i)
                 asts.add(ast.get(i).copy());
-            _env.set(key, DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, true));
+            _env.set(key, DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, true, env));
             return KeywordToken.KEYWORD_NIL;
         }));
         _env.put("while", BuiltinSpecialFunctionToken.make(((ast, env) -> {
@@ -359,23 +359,18 @@ public class CoreModule extends Module {
                 new StringToken(args.get(0).type()), new String[]{"any"}, false));
         _env.put("apply", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             Ast ast = new Ast(args.get(0));
+            ast.setType(Ast.AstType.FUNCTION);
             for (int i = 1; i < args.size(); ++i)
                 ast.add(new Ast(args.get(i)));
             return Evaluator.eval(ast, env);
         }, new String[]{"function", "any"}, true));
         _env.put("apply-list", BuiltinOrdinaryFunctionToken.make((args, env) -> {
-            List<Token> tokens = new ArrayList<>();
             ListToken list = (ListToken) args.get(1);
+            Ast ast = new Ast(args.get(0));
+            ast.setType(Ast.AstType.FUNCTION);
             for (int i = 0; i < list.size(); ++i)
-                tokens.add(list.get(i));
-            Ast asts = new Ast();
-            if (args.get(0) instanceof DevoreFunctionScheduler functionScheduler)
-                return functionScheduler.call(tokens, env);
-            for (Token token : tokens)
-                asts.add(new Ast(token));
-            if (args.get(0) instanceof SpecialFunctionToken specialFunc)
-                return specialFunc.call(asts, env);
-            return KeywordToken.KEYWORD_NIL;
+                ast.add(new Ast(list.get(i)));
+            return Evaluator.eval(ast, env);
         }, new String[]{"function", "list"}, false));
         _env.put("require", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             String path = args.get(0).toString();
@@ -421,7 +416,7 @@ public class CoreModule extends Module {
             }
             for (int i = 1; i < ast.size(); ++i)
                 asts.add(ast.get(i).copy());
-            return DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, false);
+            return DevoreBaseOrdinaryFunctionToken.make(asts, parameters, types, false, env);
         }));
         _env.put("if", BuiltinSpecialFunctionToken.make((ast, env) -> {
             Env tempEnv = env.createChild();

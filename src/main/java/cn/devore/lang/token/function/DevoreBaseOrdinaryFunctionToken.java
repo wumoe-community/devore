@@ -12,18 +12,20 @@ import java.util.List;
 
 public class DevoreBaseOrdinaryFunctionToken extends OrdinaryFunctionToken {
     private final List<Ast> _asts;
+    private final Env _env;
     private final List<String> _parameters;
 
-    private DevoreBaseOrdinaryFunctionToken(List<Ast> asts, List<String> parameters, String[] types, boolean variadic) {
+    private DevoreBaseOrdinaryFunctionToken(List<Ast> asts, List<String> parameters, String[] types, boolean variadic, Env env) {
         super(types, variadic);
         this._asts = new ArrayList<>();
         for (Ast ast : asts)
             _asts.add(ast.copy());
         this._parameters = parameters;
+        this._env = env;
     }
 
-    public static DevoreBaseOrdinaryFunctionToken make(List<Ast> asts, List<String> parameters, String[] types, boolean variadic) {
-        return new DevoreBaseOrdinaryFunctionToken(asts, parameters, types, variadic);
+    public static DevoreBaseOrdinaryFunctionToken make(List<Ast> asts, List<String> parameters, String[] types, boolean variadic, Env env) {
+        return new DevoreBaseOrdinaryFunctionToken(asts, parameters, types, variadic, env);
     }
 
     @Override
@@ -31,7 +33,7 @@ public class DevoreBaseOrdinaryFunctionToken extends OrdinaryFunctionToken {
         List<Ast> newAsts = new ArrayList<>();
         for (Ast ast : _asts)
             newAsts.add(ast.copy());
-        return make(newAsts, _parameters, _types, _variadic);
+        return make(newAsts, _parameters, _types, _variadic, _env);
     }
 
     @Override
@@ -48,7 +50,7 @@ public class DevoreBaseOrdinaryFunctionToken extends OrdinaryFunctionToken {
 
     @Override
     public Token call(List<Token> args, Env env) {
-        Env functionEnv = env.createChild();
+        Env functionEnv = _env.createChild();
         if (_variadic) {
             for (int i = 0; i < _parameters.size() - 1; ++i)
                 functionEnv.put(_parameters.get(i), args.get(i));

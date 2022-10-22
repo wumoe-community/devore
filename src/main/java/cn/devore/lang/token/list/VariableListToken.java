@@ -68,7 +68,7 @@ public class VariableListToken extends ListToken {
 
     @Override
     public ListToken add(ListToken list) {
-        for (int i = 0; i < size(); ++i)
+        for (int i = 0; i < list.size(); ++i)
             _list.add(list.get(i));
         return this;
     }

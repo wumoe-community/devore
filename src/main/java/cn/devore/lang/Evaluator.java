@@ -18,8 +18,11 @@ public class Evaluator {
                 break;
             temp = env.get(op);
         }
-        if ((temp instanceof SpecialFunctionToken || temp instanceof OrdinaryFunctionToken) && ast.isEmpty())
-            ast.setType(Ast.AstType.FUNCTION);
+        if (temp instanceof DevoreFunctionScheduler scheduler && ast.isEmpty()) {
+            for (OrdinaryFunctionToken func : scheduler.getFunctions())
+                if (func._types.length == 0 || (func._variadic && func._types.length == 1))
+                    ast.setType(Ast.AstType.FUNCTION);
+        }
         ast.setOp(temp);
         if (ast.isEmpty() && ast.type() != Ast.AstType.FUNCTION)
             return ast.op();
