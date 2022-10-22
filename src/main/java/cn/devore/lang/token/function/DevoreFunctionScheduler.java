@@ -38,12 +38,12 @@ public class DevoreFunctionScheduler extends Token {
                             if (DevoreType.check(args.get(i).type(), function._types[function._types.length - 1]) == Integer.MAX_VALUE)
                                 continue funcScheduler;
                     for (int i = 0; i < function._types.length - 1; ++i)
-                        diffing += DevoreType.check(args.get(i).type(), function._types[i]);
+                        diffing = valueAdd(diffing, DevoreType.check(args.get(i).type(), function._types[i]));
                     for (int i = function._types.length - 1; i < args.size(); ++i)
-                        diffing += DevoreType.check(args.get(i).type(), function._types[function._types.length - 1]);
+                        diffing = valueAdd(diffing, DevoreType.check(args.get(i).type(), function._types[function._types.length - 1]));
                 } else
                     for (int i = 0; i < args.size(); ++i)
-                        diffing += DevoreType.check(args.get(i).type(), function._types[i]);
+                        diffing = valueAdd(diffing, DevoreType.check(args.get(i).type(), function._types[i]));
                 if (diffing <= diff) {
                     diff = diffing;
                     diffFunc = function;
@@ -52,6 +52,12 @@ public class DevoreFunctionScheduler extends Token {
         }
         DevoreAssert.runtimeAssert(diff != Integer.MAX_VALUE, "No matching function found.");
         return diffFunc.call(args, env);
+    }
+
+    private static int valueAdd(int v1, int v2) {
+        if (v1 == Integer.MAX_VALUE || v2 == Integer.MIN_VALUE)
+            return Integer.MAX_VALUE;
+        return v1 + v2;
     }
 
     @Override
