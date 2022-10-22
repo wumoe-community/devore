@@ -60,8 +60,6 @@ public class DevoreFunctionScheduler extends Token {
                 }
             }
         }
-        if (diff == Integer.MAX_VALUE)
-            System.out.println();
         DevoreAssert.runtimeAssert(diff != Integer.MAX_VALUE, "No matching function found.");
         return diffFunc.call(args, env);
     }

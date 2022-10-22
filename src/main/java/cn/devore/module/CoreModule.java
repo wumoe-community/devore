@@ -626,7 +626,7 @@ public class CoreModule extends Module {
         _env.put("list-add", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             ListToken list = (ListToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
-                list.add(args.get(i));
+                list = list.add(args.get(i));
             return list;
         }, new String[]{"list", "any"}, true));
         _env.put("list-set", BuiltinOrdinaryFunctionToken.make(((args, env) ->
@@ -636,13 +636,13 @@ public class CoreModule extends Module {
         _env.put("list-remove", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             ListToken list = (ListToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
-                list.remove(args.get(i));
+                list = list.remove(args.get(i));
             return list;
         }, new String[]{"list", "any"}, true));
         _env.put("list-remove-index", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             ListToken list = (ListToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
-                list.remove(((NumberToken) args.get(i)).toInt());
+                list = list.remove(((NumberToken) args.get(i)).toInt());
             return list;
         }, new String[]{"list", "any"}, true));
         _env.put("sort", BuiltinOrdinaryFunctionToken.make((args, env) -> ((ListToken) args.get(0)).sort(), new String[]{"list"}, false));
