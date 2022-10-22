@@ -75,6 +75,7 @@ public class DevoreType {
         for (int i = 0; i < vertices - 1; ++i)
             adjacencyList.get(vertices - 1).add(new Neighbour(i, 0));
         int[] h = bellmanford(vertices - 1);
+        DevoreAssert.typeAssert(h != null, "Bellmanford returns null.");
         for (int u = 0; u < vertices; ++u) {
             ArrayList<Neighbour> neighbours = adjacencyList.get(u);
             for (Neighbour neighbour : neighbours) {
