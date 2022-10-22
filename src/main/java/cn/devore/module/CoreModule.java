@@ -53,7 +53,7 @@ public class CoreModule extends Module {
                         value = Evaluator.eval(e.copy(), env.createChild());
                     String type = ((IdToken) node.op())._type;
                     DevoreAssert.typeAssert(
-                            DevoreType.path(value.type(), type) != Integer.MAX_VALUE,
+                            DevoreType.check(value.type(), type) != Integer.MAX_VALUE,
                             value.type() + " not is " + type);
                     newEnv.put(node.op().toString(), value);
                 }
@@ -84,7 +84,7 @@ public class CoreModule extends Module {
                         value = Evaluator.eval(e.copy(), newEnv.createChild());
                     String type = ((IdToken) node.op())._type;
                     DevoreAssert.typeAssert(
-                            DevoreType.path(value.type(), type) != Integer.MAX_VALUE,
+                            DevoreType.check(value.type(), type) != Integer.MAX_VALUE,
                             value + " not is " + type);
                     newEnv.put(node.op().toString(), value);
                 }

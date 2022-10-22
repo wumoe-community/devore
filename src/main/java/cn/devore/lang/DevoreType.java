@@ -129,10 +129,18 @@ public class DevoreType {
         return v1 + v2;
     }
 
-    public static int path(String start, String end) {
+    private static int path(String start, String end) {
         DevoreAssert.typeAssert(_types.contains(start), "Type " + start + " does not exist.");
         DevoreAssert.typeAssert(_types.contains(end), "Type " + end + " does not exist.");
         return distances[_types.indexOf(start)][_types.indexOf(end)];
+    }
+
+    public static int check(String des, String anc) {
+        String[] types = anc.split("\\|");
+        int path = Integer.MAX_VALUE;
+        for (String type : types)
+            path = Math.min(path, path(des, type));
+        return path;
     }
 
     public static void init() {

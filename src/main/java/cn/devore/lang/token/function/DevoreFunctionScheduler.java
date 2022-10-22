@@ -3,7 +3,6 @@ package cn.devore.lang.token.function;
 import cn.devore.error.DevoreAssert;
 import cn.devore.lang.Env;
 import cn.devore.lang.Token;
-import cn.devore.lang.token.KeywordToken;
 import cn.devore.lang.DevoreType;
 
 import java.util.ArrayList;
@@ -35,15 +34,15 @@ public class DevoreFunctionScheduler extends Token {
                 if (function._variadic) {
                     if (args.size() >= function._types.length)
                         for (int i = function._types.length - 1; i < args.size(); ++i)
-                            if (DevoreType.path(args.get(i).type(), function._types[function._types.length - 1]) == Integer.MAX_VALUE)
+                            if (DevoreType.check(args.get(i).type(), function._types[function._types.length - 1]) == Integer.MAX_VALUE)
                                 continue funcScheduler;
                     for (int i = 0; i < function._types.length - 1; ++i)
-                        diffing += DevoreType.path(args.get(i).type(), function._types[i]);
+                        diffing += DevoreType.check(args.get(i).type(), function._types[i]);
                     for (int i = function._types.length - 1; i < args.size(); ++i)
-                        diffing += DevoreType.path(args.get(i).type(), function._types[function._types.length - 1]);
+                        diffing += DevoreType.check(args.get(i).type(), function._types[function._types.length - 1]);
                 } else
                     for (int i = 0; i < args.size(); ++i)
-                        diffing += DevoreType.path(args.get(i).type(), function._types[i]);
+                        diffing += DevoreType.check(args.get(i).type(), function._types[i]);
                 if (diffing <= diff) {
                     diff = diffing;
                     diffFunc = function;
