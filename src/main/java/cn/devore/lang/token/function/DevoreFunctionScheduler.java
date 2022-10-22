@@ -43,7 +43,7 @@ public class DevoreFunctionScheduler extends Token {
                 } else
                     for (int i = 0; i < args.size(); ++i)
                         diffing += DevoreType.path(args.get(i).type(), function._types[i]);
-                if (diffing < diff) {
+                if (diffing <= diff) {
                     diff = diffing;
                     diffFunc = function;
                 }
