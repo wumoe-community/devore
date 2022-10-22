@@ -355,8 +355,22 @@ public class CoreModule extends Module {
                 asts.add(new Ast(token));
             if (args.get(0) instanceof SpecialFunctionToken specialFunc)
                 return specialFunc.call(asts, env);
-            return args.get(0);
+            return KeywordToken.KEYWORD_NIL;
         }, new String[]{"function", "any"}, true));
+        _env.put("apply-list", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            List<Token> tokens = new ArrayList<>();
+            ListToken list = (ListToken) args.get(1);
+            for (int i = 0; i < list.size(); ++i)
+                tokens.add(list.get(i));
+            Ast asts = new Ast();
+            if (args.get(0) instanceof DevoreFunctionScheduler functionScheduler)
+                return functionScheduler.call(tokens, env);
+            for (Token token : tokens)
+                asts.add(new Ast(token));
+            if (args.get(0) instanceof SpecialFunctionToken specialFunc)
+                return specialFunc.call(asts, env);
+            return KeywordToken.KEYWORD_NIL;
+        }, new String[]{"function", "list"}, false));
         _env.put("require", BuiltinOrdinaryFunctionToken.make((args, env) -> {
             String path = args.get(0).toString();
             if (Devore._module.containsKey(path)) {
