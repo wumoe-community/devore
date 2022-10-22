@@ -17,7 +17,7 @@ public class DevoreType {
         }
     }
     private static final ArrayList<ArrayList<Neighbour>> adjacencyList = new ArrayList<>();
-    private static final List<String> types = new ArrayList<>();
+    private static final List<String> _types = new ArrayList<>();
     private static int[][] distances;
     private static int vertices = 0;
 
@@ -102,19 +102,25 @@ public class DevoreType {
     public static void addType(String name) {
         adjacencyList.add(new ArrayList<>());
         ++vertices;
-        types.add(name);
+        _types.add(name);
+    }
+
+    public static boolean contains(String name) {
+        return _types.contains(name);
     }
 
     public static void addType(String name, String child) {
-        addType(name);
-        addType(child);
+        if (!contains(name))
+            addType(name);
+        if (!contains(child))
+            addType(child);
         paternity(name, child);
     }
 
     public static void paternity(String father, String child) {
-        DevoreAssert.typeAssert(types.contains(father), "Type " + father + " does not exist.");
-        DevoreAssert.typeAssert(types.contains(child), "Type " + child + " does not exist.");
-        adjacencyList.get(types.indexOf(child)).add(new Neighbour(types.indexOf(father), 1));
+        DevoreAssert.typeAssert(_types.contains(father), "Type " + father + " does not exist.");
+        DevoreAssert.typeAssert(_types.contains(child), "Type " + child + " does not exist.");
+        adjacencyList.get(_types.indexOf(child)).add(new Neighbour(_types.indexOf(father), 1));
     }
 
     public static void apply() {
@@ -128,9 +134,9 @@ public class DevoreType {
     }
 
     public static int path(String start, String end) {
-        DevoreAssert.typeAssert(types.contains(start), "Type " + start + " does not exist.");
-        DevoreAssert.typeAssert(types.contains(end), "Type " + end + " does not exist.");
-        return distances[types.indexOf(start)][types.indexOf(end)];
+        DevoreAssert.typeAssert(_types.contains(start), "Type " + start + " does not exist.");
+        DevoreAssert.typeAssert(_types.contains(end), "Type " + end + " does not exist.");
+        return distances[_types.indexOf(start)][_types.indexOf(end)];
     }
 
     public static void init() {
