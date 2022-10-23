@@ -139,6 +139,7 @@ public class DevoreType {
         addType("any", "comparable");
         addType("comparable", "arithmetic");
         addType("arithmetic", "num");
+        addType("num", "complex");
         addType("num", "real");
         addType("real", "int");
         addType("any", "list");

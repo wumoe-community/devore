@@ -1,8 +1,23 @@
 package cn.devore.util;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 public class StringUtils {
+    private static final DecimalFormat _df = new DecimalFormat("#");
+
+    static {
+        _df.setMaximumFractionDigits(8);
+    }
+
+    public static String doubleToString(double d) {
+        if (d % 1 == 0 && d < (double) Long.MAX_VALUE) {
+            return String.format("%d", (long) d);
+        } else {
+            return _df.format(d);
+        }
+    }
+
     public static String bigDecimalToString(BigDecimal val) {
         return trimZeros(val.toString());
     }

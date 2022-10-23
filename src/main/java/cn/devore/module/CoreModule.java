@@ -11,6 +11,7 @@ import cn.devore.lang.token.list.ImmutableListToken;
 import cn.devore.lang.token.list.ListToken;
 import cn.devore.lang.token.list.VariableListToken;
 import cn.devore.lang.token.math.ArithmeticToken;
+import cn.devore.lang.token.math.ComplexToken;
 import cn.devore.lang.token.math.NumberToken;
 import cn.devore.lang.token.math.RealToken;
 import cn.devore.lang.token.table.ImmutableTableToken;
@@ -213,6 +214,9 @@ public class CoreModule extends Module {
             Devore.print.print(builder);
             return KeywordToken.KEYWORD_NIL;
         }), new String[]{"any"}, true));
+        _env.put("complex", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                        new ComplexToken(Double.parseDouble(args.get(0).toString()), Double.parseDouble(args.get(1).toString())),
+                new String[]{"real", "real"}, false));
         _env.put("+", BuiltinOrdinaryFunctionToken.make(((args, env) -> {
             ArithmeticToken arithmetic = (ArithmeticToken) args.get(0);
             for (int i = 1; i < args.size(); ++i)
