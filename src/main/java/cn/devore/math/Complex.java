@@ -1,4 +1,4 @@
-package cn.devore.lang.token.math;
+package cn.devore.math;
 
 import cn.devore.exception.DevoreAssert;
 

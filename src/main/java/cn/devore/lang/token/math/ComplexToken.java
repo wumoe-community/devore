@@ -3,6 +3,7 @@ package cn.devore.lang.token.math;
 import cn.devore.lang.Token;
 import cn.devore.lang.token.BoolToken;
 import cn.devore.lang.token.ComparableToken;
+import cn.devore.math.Complex;
 import cn.devore.util.MathUtils;
 import cn.devore.util.StringUtils;
 
