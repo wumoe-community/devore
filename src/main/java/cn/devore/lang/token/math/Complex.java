@@ -147,4 +147,3 @@ public class Complex {
         return div(2.0, mul(IM, (div(ZP, ZM).log())));
     }
 }
-
