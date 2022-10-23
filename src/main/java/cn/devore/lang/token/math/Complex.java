@@ -48,7 +48,6 @@ public class Complex {
         real /= (c + d);
         imag = (a.i * b.r) - (a.r * b.i);
         imag /= (c + d);
-
         return new Complex(real, imag);
     }
 
@@ -56,11 +55,11 @@ public class Complex {
         double x, y, ans, temp;
         x = Math.abs(z.r);
         y = Math.abs(z.i);
-        if (x == 0.0) {
+        if (x == 0.0)
             ans = y;
-        } else if (y == 0.0) {
+        else if (y == 0.0)
             ans = x;
-        } else if (x > y) {
+        else if (x > y) {
             temp = y / x;
             ans = x * Math.sqrt(1.0 + (temp * temp));
         } else {
@@ -90,18 +89,16 @@ public class Complex {
     public Complex ln() {
         final double rpart = Math.sqrt((this.r * this.r) + (this.i * this.i));
         double ipart = Math.atan2(this.i, this.r);
-        if (ipart > Math.PI) {
+        if (ipart > Math.PI)
             ipart = ipart - (2.0 * Math.PI);
-        }
         return new Complex(Math.log(rpart), ipart);
     }
 
     public Complex log() {
         final double rpart = Math.sqrt((this.r * this.r) + (this.i * this.i));
         double ipart = Math.atan2(this.i, this.r);
-        if (ipart > Math.PI) {
+        if (ipart > Math.PI)
             ipart = ipart - (2.0 * Math.PI);
-        }
         return new Complex(Math.log10(rpart), (1 / Math.log(10)) * ipart);
     }
 
@@ -109,9 +106,8 @@ public class Complex {
         final double r = Math.sqrt((this.r * this.r) + (this.i * this.i));
         final double rpart = Math.sqrt(0.5 * (r + this.r));
         double ipart = Math.sqrt(0.5 * (r - this.r));
-        if (this.i < 0.0) {
+        if (this.i < 0.0)
             ipart = -ipart;
-        }
         return new Complex(rpart, ipart);
     }
 
