@@ -11,11 +11,7 @@ public class StringUtils {
     }
 
     public static String doubleToString(double d) {
-        if (d % 1 == 0 && d < (double) Long.MAX_VALUE) {
-            return String.format("%d", (long) d);
-        } else {
-            return _df.format(d);
-        }
+        return ((d % 1 == 0) && (d < (double) Long.MAX_VALUE)) ? String.format("%d", (long) d) : _df.format(d);
     }
 
     public static String bigDecimalToString(BigDecimal val) {
