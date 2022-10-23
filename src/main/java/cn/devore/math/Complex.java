@@ -6,7 +6,7 @@ public class Complex {
     public double r;
     public double i;
 
-    public Complex(final double r, final double i) {
+    public Complex(double r, double i) {
         this.r = r;
         this.i = i;
     }
@@ -16,32 +16,32 @@ public class Complex {
         this.i = 0.0;
     }
 
-    public static Complex add(final Complex a, final Complex b) {
-        final double real = a.r + b.r;
-        final double imag = a.i + b.i;
+    public static Complex add(Complex a, Complex b) {
+        double real = a.r + b.r;
+        double imag = a.i + b.i;
         return new Complex(real, imag);
     }
 
-    public static Complex add(final double real, final Complex c) {
+    public static Complex add(double real, Complex c) {
         return new Complex(c.r + real, c.i);
     }
 
-    public static Complex sub(final Complex a, final Complex b) {
-        final double real = a.r - b.r;
-        final double imag = a.i - b.i;
+    public static Complex sub(Complex a, Complex b) {
+        double real = a.r - b.r;
+        double imag = a.i - b.i;
         return new Complex(real, imag);
     }
 
-    public static Complex mul(final Complex a, final Complex b) {
-        final double real = (a.r * b.r) - (a.i * b.i);
-        final double imag = (a.i * b.r) + (a.r * b.i);
+    public static Complex mul(Complex a, Complex b) {
+        double real = (a.r * b.r) - (a.i * b.i);
+        double imag = (a.i * b.r) + (a.r * b.i);
         return new Complex(real, imag);
     }
 
-    public static Complex div(final Complex a, final Complex b) {
+    public static Complex div(Complex a, Complex b) {
         DevoreAssert.runtimeAssert((b.r != 0) || (b.i != 0), "The complex number b is 0");
-        final double c = Math.pow(b.r, 2);
-        final double d = Math.pow(b.i, 2);
+        double c = Math.pow(b.r, 2);
+        double d = Math.pow(b.i, 2);
         double real;
         double imag;
         real = (a.r * b.r) + (a.i * b.i);
@@ -51,7 +51,7 @@ public class Complex {
         return new Complex(real, imag);
     }
 
-    public static double abs(final Complex z) {
+    public static double abs(Complex z) {
         double x, y, ans, temp;
         x = Math.abs(z.r);
         y = Math.abs(z.i);
@@ -69,9 +69,9 @@ public class Complex {
         return ans;
     }
 
-    public static Complex div(final double x, final Complex c) {
+    public static Complex div(double x, Complex c) {
         DevoreAssert.runtimeAssert(x != 0, "scalar is 0");
-        final Complex result = new Complex();
+        Complex result = new Complex();
         result.r = c.r / x;
         result.i = c.i / x;
         return result;
@@ -82,12 +82,12 @@ public class Complex {
     }
 
     public Complex exp() {
-        final double exp_x = Math.exp(this.r);
+        double exp_x = Math.exp(this.r);
         return new Complex(exp_x * Math.cos(this.i), exp_x * Math.sin(this.i));
     }
 
     public Complex ln() {
-        final double rpart = Math.sqrt((this.r * this.r) + (this.i * this.i));
+        double rpart = Math.sqrt((this.r * this.r) + (this.i * this.i));
         double ipart = Math.atan2(this.i, this.r);
         if (ipart > Math.PI)
             ipart = ipart - (2.0 * Math.PI);
@@ -95,7 +95,7 @@ public class Complex {
     }
 
     public Complex log() {
-        final double rpart = Math.sqrt((this.r * this.r) + (this.i * this.i));
+        double rpart = Math.sqrt((this.r * this.r) + (this.i * this.i));
         double ipart = Math.atan2(this.i, this.r);
         if (ipart > Math.PI)
             ipart = ipart - (2.0 * Math.PI);
@@ -103,8 +103,8 @@ public class Complex {
     }
 
     public Complex sqrt() {
-        final double r = Math.sqrt((this.r * this.r) + (this.i * this.i));
-        final double rpart = Math.sqrt(0.5 * (r + this.r));
+        double r = Math.sqrt((this.r * this.r) + (this.i * this.i));
+        double rpart = Math.sqrt(0.5 * (r + this.r));
         double ipart = Math.sqrt(0.5 * (r - this.r));
         if (this.i < 0.0)
             ipart = -ipart;
@@ -124,22 +124,22 @@ public class Complex {
     }
 
     public Complex asin() {
-        final Complex IM = new Complex(0.0, -1.0);
-        final Complex ZP = mul(this, IM);
-        final Complex ZM = add((sub(new Complex(1.0, 0.0), mul(this, this))).sqrt(), ZP);
+        Complex IM = new Complex(0.0, -1.0);
+        Complex ZP = mul(this, IM);
+        Complex ZM = add((sub(new Complex(1.0, 0.0), mul(this, this))).sqrt(), ZP);
         return mul(ZM.log(), new Complex(0.0, 1.0));
     }
 
     public Complex acos() {
-        final Complex IM = new Complex(0.0, -1.0);
-        final Complex ZM = add(mul((sub(new Complex(1.0, 0.0), mul(this, this))).sqrt(), IM), this);
+        Complex IM = new Complex(0.0, -1.0);
+        Complex ZM = add(mul((sub(new Complex(1.0, 0.0), mul(this, this))).sqrt(), IM), this);
         return mul(ZM.log(), new Complex(0.0, 1.0));
     }
 
     public Complex atan() {
-        final Complex IM = new Complex(0.0, -1.0);
-        final Complex ZP = new Complex(this.r, this.i - 1.0);
-        final Complex ZM = new Complex(-this.r, -this.i - 1.0);
+        Complex IM = new Complex(0.0, -1.0);
+        Complex ZP = new Complex(this.r, this.i - 1.0);
+        Complex ZM = new Complex(-this.r, -this.i - 1.0);
         return div(2.0, mul(IM, (div(ZP, ZM).log())));
     }
 }
