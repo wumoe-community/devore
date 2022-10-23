@@ -14,7 +14,7 @@ import java.math.BigInteger;
 
 public class ComplexToken extends NumberToken {
     public static final Complex COMPLEX_ONE = new Complex(1.0, 0.0);
-    public static final Complex COMPLEX_ZERO = new Complex(1.0, 0.0);
+    public static final Complex COMPLEX_ZERO = new Complex(0.0, 0.0);
     public static final ComplexToken ZERO = new ComplexToken(COMPLEX_ZERO);
     public static final ComplexToken ONE = new ComplexToken(COMPLEX_ONE);
     public static final ComplexToken NEG_ONE = new ComplexToken(-1);
