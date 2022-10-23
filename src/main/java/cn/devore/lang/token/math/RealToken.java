@@ -135,15 +135,6 @@ public class RealToken extends NumberToken {
     }
 
     @Override
-    public NumberToken idiv(NumberToken other) {
-        return this.idiv((RealToken) this.convert(other));
-    }
-
-    public RealToken idiv(RealToken other) {
-        return RealToken.valueOf(floor(_val.divide(other._val, Devore.MATH_CONTEXT)));
-    }
-
-    @Override
     public NumberToken mod(NumberToken other) {
         return this.mod((RealToken) this.convert(other));
     }

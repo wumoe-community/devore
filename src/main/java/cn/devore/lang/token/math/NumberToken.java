@@ -20,12 +20,6 @@ public abstract class NumberToken extends ArithmeticToken {
 
     public abstract BigInteger toBigInteger();
 
-    public byte toByte() {
-        return (byte) toInt();
-    }
-
-    public abstract NumberToken idiv(NumberToken other);
-
     public abstract NumberToken mod(NumberToken other);
 
     public abstract NumberToken pow(NumberToken other);

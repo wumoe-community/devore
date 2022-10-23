@@ -586,6 +586,22 @@ public class CoreModule extends Module {
                 temp = temp.add((ArithmeticToken) args.get(i));
             return temp.div(new RealToken(args.size()));
         }, new String[]{"arithmetic", "arithmetic"}, true));
+        _env.put("gcd", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            NumberToken temp = ((NumberToken) args.get(0)).gcd((NumberToken) args.get(1));
+            for (int i = 2; i < args.size(); ++i)
+                temp = temp.gcd((NumberToken) args.get(i));
+            return temp;
+        }, new String[]{"num", "num", "num"}, true));
+        _env.put("gcd", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            NumberToken temp = ((NumberToken) args.get(0)).gcd((NumberToken) args.get(1));
+            for (int i = 2; i < args.size(); ++i)
+                temp = temp.lcm((NumberToken) args.get(i));
+            return temp;
+        }, new String[]{"num", "num", "num"}, true));
+        _env.put("mod", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).mod((NumberToken) args.get(1)), new String[]{"num", "num"}, false));
+        _env.put("pow", BuiltinOrdinaryFunctionToken.make((args, env) ->
+                ((NumberToken) args.get(0)).pow((NumberToken) args.get(1)), new String[]{"num", "num"}, false));
         _env.put("sin", BuiltinOrdinaryFunctionToken.make((args, env) ->
                 ((NumberToken) args.get(0)).sin(), new String[]{"num"}, false));
         _env.put("cos", BuiltinOrdinaryFunctionToken.make((args, env) ->
