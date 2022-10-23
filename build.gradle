@@ -20,6 +20,5 @@ jar {
 }
 
 dependencies {
-    implementation fileTree(dir:'libs',include:['*.jar'])
     implementation 'ch.obermuhlner:big-math:2.3.0'
 }

@@ -1,13 +1,10 @@
 package cn.devore.lang.token.math;
 
-import cn.devore.exception.DevoreRuntimeException;
 import cn.devore.lang.Token;
 import cn.devore.lang.token.BoolToken;
 import cn.devore.lang.token.ComparableToken;
 import cn.devore.util.MathUtils;
 import cn.devore.util.StringUtils;
-import com.mathlibrary.exception.CalculatorException;
-import com.mathlibrary.function.Complex;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -39,6 +36,14 @@ public class ComplexToken extends NumberToken {
 
     public ComplexToken(double r, double i) {
         _val = new Complex(r, i);
+    }
+
+    private static Complex ceil(Complex complex) {
+        return new Complex(Math.ceil(complex.r), complex.i);
+    }
+
+    private static Complex floor(Complex complex) {
+        return new Complex(Math.floor(complex.r), complex.i);
     }
 
     public double i() {
@@ -112,11 +117,7 @@ public class ComplexToken extends NumberToken {
     }
 
     public ComplexToken div(ComplexToken other) {
-        try {
-            return new ComplexToken(Complex.div(_val, other._val));
-        } catch (CalculatorException e) {
-            throw new DevoreRuntimeException(e.getMessage());
-        }
+        return new ComplexToken(Complex.div(_val, other._val));
     }
 
     @Override
@@ -204,11 +205,7 @@ public class ComplexToken extends NumberToken {
 
     @Override
     public NumberToken tan() {
-        try {
-            return new ComplexToken(_val.tan());
-        } catch (CalculatorException e) {
-            throw new DevoreRuntimeException(e.getMessage());
-        }
+        return new ComplexToken(_val.tan());
     }
 
     @Override
@@ -223,11 +220,7 @@ public class ComplexToken extends NumberToken {
 
     @Override
     public NumberToken atan() {
-        try {
-            return new ComplexToken(_val.atan());
-        } catch (CalculatorException e) {
-            throw new DevoreRuntimeException(e.getMessage());
-        }
+        return new ComplexToken(_val.atan());
     }
 
     @Override
@@ -265,7 +258,6 @@ public class ComplexToken extends NumberToken {
         return _val.r != 0.0;
     }
 
-
     @Override
     public boolean equiv(Token o) {
         if (o instanceof ComplexToken c)
@@ -301,14 +293,6 @@ public class ComplexToken extends NumberToken {
     @Override
     public ComplexToken negOne() {
         return NEG_ONE;
-    }
-
-    private static Complex ceil(Complex complex) {
-        return new Complex(Math.ceil(complex.r), complex.i);
-    }
-
-    private static Complex floor(Complex complex) {
-        return new Complex(Math.floor(complex.r), complex.i);
     }
 
     @Override
