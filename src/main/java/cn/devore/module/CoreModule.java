@@ -422,12 +422,13 @@ public class CoreModule extends Module {
             Env tempEnv = env.createChild();
             if (Evaluator.eval(ast.get(0), tempEnv).bool())
                 return Evaluator.eval(ast.get(1), tempEnv);
-            else {
+            else if (ast.size() > 2) {
                 Token result = Evaluator.eval(ast.get(2), tempEnv);
                 for (int i = 3; i < ast.size(); ++i)
                     result = Evaluator.eval(ast.get(i), tempEnv);
                 return result;
             }
+            return KeywordToken.KEYWORD_NIL;
         }));
         _env.put("not", BuiltinOrdinaryFunctionToken.make((args, env) ->
                 args.get(0).bool() ? BoolToken.FALSE : BoolToken.TRUE, new String[]{"bool"}, false));
@@ -474,19 +475,19 @@ public class CoreModule extends Module {
             return BoolToken.TRUE;
         }, new String[]{"comparable"}, true));
         _env.put("=", BuiltinOrdinaryFunctionToken.make((args, env) -> {
-            ComparableToken temp = (ComparableToken) args.get(0);
+            Token temp = args.get(0);
             for (int i = 1; i < args.size(); ++i)
-                if (temp.compareTo((ComparableToken) args.get(i)) != 0)
+                if (!temp.equals(args.get(i)))
                     return BoolToken.FALSE;
             return BoolToken.TRUE;
-        }, new String[]{"comparable"}, true));
+        }, new String[]{"any"}, true));
         _env.put("/=", BuiltinOrdinaryFunctionToken.make((args, env) -> {
-            ComparableToken temp = (ComparableToken) args.get(0);
+            Token temp = args.get(0);
             for (int i = 1; i < args.size(); ++i)
-                if (temp.compareTo((ComparableToken) args.get(i)) == 0)
+                if (temp.equals(args.get(i)))
                     return BoolToken.FALSE;
             return BoolToken.TRUE;
-        }, new String[]{"comparable"}, true));
+        }, new String[]{"any"}, true));
         _env.put("begin", BuiltinSpecialFunctionToken.make((ast, env) -> {
             Env tempEnv = env.createChild();
             Token result = Evaluator.eval(ast.get(0), tempEnv);

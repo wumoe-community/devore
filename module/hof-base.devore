@@ -7,3 +7,7 @@
             (lambda (a)
                 (curry-rec (- i 1) (list-add l a)))))
     (curry-rec n (list)))
+(def-variadic (maybe f:function v:any)
+    (def flag true)
+    (for-each (lambda (e) (if (= e nil) (set! flag false))) v)
+    (if (flag) (apply-list f v) nil))
