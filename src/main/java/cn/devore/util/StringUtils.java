@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 public class StringUtils {
-    private static final DecimalFormat _df = new DecimalFormat("#");
+    private static final DecimalFormat _df = new DecimalFormat("0");
 
     static {
         _df.setMaximumFractionDigits(8);
