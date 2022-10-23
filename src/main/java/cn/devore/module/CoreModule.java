@@ -580,6 +580,12 @@ public class CoreModule extends Module {
             }
             return result.toImmutable();
         }, new String[]{"function", "list"}, false));
+        _env.put("average", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            ArithmeticToken temp = (ArithmeticToken) args.get(0);
+            for (int i = 1; i < args.size(); ++i)
+                temp = temp.add((ArithmeticToken) args.get(i));
+            return temp.div(new RealToken(args.size()));
+        }, new String[]{"arithmetic", "arithmetic"}, true));
         _env.put("sin", BuiltinOrdinaryFunctionToken.make((args, env) ->
                 ((NumberToken) args.get(0)).sin(), new String[]{"num"}, false));
         _env.put("cos", BuiltinOrdinaryFunctionToken.make((args, env) ->
