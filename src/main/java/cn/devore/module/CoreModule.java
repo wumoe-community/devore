@@ -43,6 +43,27 @@ public class CoreModule extends Module {
         _env.put("true", BoolToken.TRUE);
         _env.put("false", BoolToken.FALSE);
         _env.put("nil", KeywordToken.KEYWORD_NIL);
+        _env.put("def-structure", BuiltinSpecialFunctionToken.make(((ast, env) -> {
+            String type = ast.get(0).op().toString();
+            DevoreType.addType("structure", type);
+            DevoreType.apply();
+            String[] types = new String[ast.size() - 1];
+            for (int i = 1; i < ast.size(); ++i) {
+                String name = ast.get(i).op().toString();
+                String typeEmbedded = ((IdToken) ast.get(i).op())._type;
+                types[i - 1] = typeEmbedded;
+                int finalI = i;
+                env.put(type + "-" + name, BuiltinOrdinaryFunctionToken.make((args, inlineEnv) ->
+                                ((StructureToken) args.get(0)).get(finalI - 1), new String[]{type}, false));
+                env.put("set-" + type + "-" + name + "!", BuiltinOrdinaryFunctionToken.make((args, inlineEnv) -> {
+                            ((StructureToken) args.get(0)).set(finalI - 1, args.get(1));
+                            return KeywordToken.KEYWORD_NIL;
+                }, new String[]{type, typeEmbedded}, false));
+            }
+            env.put("make-" + type, BuiltinOrdinaryFunctionToken.make((args, inlineEnv) ->
+                    new StructureToken(type, args), types, false));
+            return KeywordToken.KEYWORD_NIL;
+        })));
         _env.put("let", BuiltinSpecialFunctionToken.make(((ast, env) -> {
             Env newEnv = env.createChild();
             Token result = KeywordToken.KEYWORD_NIL;

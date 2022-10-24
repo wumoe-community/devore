@@ -40,44 +40,44 @@ public class ComplexToken extends NumberToken {
     }
 
     private static Complex ceil(Complex complex) {
-        return new Complex(Math.ceil(complex.r), complex.i);
+        return new Complex(Math.ceil(complex._r), complex._i);
     }
 
     private static Complex floor(Complex complex) {
-        return new Complex(Math.floor(complex.r), complex.i);
+        return new Complex(Math.floor(complex._r), complex._i);
     }
 
     public double i() {
-        return _val.i;
+        return _val._i;
     }
 
     public double r() {
-        return _val.r;
+        return _val._r;
     }
 
     @Override
     public int toInt() {
-        return (int) _val.r;
+        return (int) _val._r;
     }
 
     @Override
     public long toLong() {
-        return (long) _val.r;
+        return (long) _val._r;
     }
 
     @Override
     public float toFloat() {
-        return (float) _val.r;
+        return (float) _val._r;
     }
 
     @Override
     public double toDouble() {
-        return _val.r;
+        return _val._r;
     }
 
     @Override
     public BigDecimal toBigDecimal() {
-        return new BigDecimal(_val.r);
+        return new BigDecimal(_val._r);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class ComplexToken extends NumberToken {
     }
 
     public ComplexToken mod(ComplexToken other) {
-        return new ComplexToken(new Complex(((long) _val.r) % ((long) other._val.r), 0.0));
+        return new ComplexToken(new Complex(((long) _val._r) % ((long) other._val._r), 0.0));
     }
 
     @Override
@@ -147,7 +147,7 @@ public class ComplexToken extends NumberToken {
     }
 
     public ComplexToken gcd(ComplexToken other) {
-        return new ComplexToken(MathUtils.gcd(new BigDecimal(_val.r), new BigDecimal(other._val.r)));
+        return new ComplexToken(MathUtils.gcd(new BigDecimal(_val._r), new BigDecimal(other._val._r)));
     }
 
     @Override
@@ -156,7 +156,7 @@ public class ComplexToken extends NumberToken {
     }
 
     public ComplexToken lcm(ComplexToken other) {
-        return new ComplexToken(MathUtils.lcm(new BigDecimal(_val.r), new BigDecimal(other._val.r)));
+        return new ComplexToken(MathUtils.lcm(new BigDecimal(_val._r), new BigDecimal(other._val._r)));
     }
 
     @Override
@@ -176,12 +176,12 @@ public class ComplexToken extends NumberToken {
 
     @Override
     public NumberToken signnum() {
-        return new RealToken(new BigDecimal(_val.r).signum());
+        return new RealToken(new BigDecimal(_val._r).signum());
     }
 
     @Override
     public NumberToken factorial() {
-        return new RealToken(MathUtils.factorial(new BigDecimal(_val.r)));
+        return new RealToken(MathUtils.factorial(new BigDecimal(_val._r)));
     }
 
     @Override
@@ -251,20 +251,20 @@ public class ComplexToken extends NumberToken {
 
     @Override
     public BoolToken isPrime() {
-        return BoolToken.valueOf(MathUtils.isPrime(new BigInteger(String.valueOf((long) _val.r))));
+        return BoolToken.valueOf(MathUtils.isPrime(new BigInteger(String.valueOf((long) _val._r))));
     }
 
     @Override
     public boolean bool() {
-        return _val.r != 0.0;
+        return _val._r != 0.0;
     }
 
     @Override
     public boolean equiv(Token o) {
         if (o instanceof ComplexToken c)
-            return c._val.i == _val.i && c._val.r == _val.r;
-        else if (o instanceof NumberToken && _val.i == 0.0)
-            return ((NumberToken) o).toDouble() == _val.r;
+            return c._val._i == _val._i && c._val._r == _val._r;
+        else if (o instanceof NumberToken && _val._i == 0.0)
+            return ((NumberToken) o).toDouble() == _val._r;
         else
             return false;
     }
@@ -277,7 +277,7 @@ public class ComplexToken extends NumberToken {
     @Override
     public int compareTo(ComparableToken n) {
         if (n instanceof NumberToken)
-            return Double.compare(_val.r, ((NumberToken) n).toDouble());
+            return Double.compare(_val._r, ((NumberToken) n).toDouble());
         return 0;
     }
 
@@ -303,12 +303,12 @@ public class ComplexToken extends NumberToken {
 
     @Override
     public String toString() {
-        if (_val.r != 0 && _val.i != 0)
-            return StringUtils.doubleToString(_val.r) + "+" + StringUtils.doubleToString(_val.i) + "i";
-        if (_val.r == 0 && _val.i != 0)
-            return StringUtils.doubleToString(_val.i) + "i";
-        if (_val.r != 0)
-            return String.valueOf(StringUtils.doubleToString(_val.r));
+        if (_val._r != 0 && _val._i != 0)
+            return StringUtils.doubleToString(_val._r) + "+" + StringUtils.doubleToString(_val._i) + "i";
+        if (_val._r == 0 && _val._i != 0)
+            return StringUtils.doubleToString(_val._i) + "i";
+        if (_val._r != 0)
+            return String.valueOf(StringUtils.doubleToString(_val._r));
         return "0";
     }
 }

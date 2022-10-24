@@ -155,6 +155,7 @@ public class DevoreType {
         addType("any", "nil");
         addType("any", "undefined");
         addType("any", "function");
+        addType("any", "structure");
         apply();
     }
 
