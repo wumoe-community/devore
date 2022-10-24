@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DevoreType {
-    private static final ArrayList<ArrayList<Neighbour>> adjacencyList = new ArrayList<>();
+    private static final List<List<Neighbour>> adjacencyList = new ArrayList<>();
     private static final List<String> _types = new ArrayList<>();
     private static int[][] distances;
     private static int vertices = 0;
@@ -68,7 +68,7 @@ public class DevoreType {
         int[] h = bellmanford(vertices - 1);
         DevoreAssert.typeAssert(h != null, "Bellmanford returns null.");
         for (int u = 0; u < vertices; ++u) {
-            ArrayList<Neighbour> neighbours = adjacencyList.get(u);
+            List<Neighbour> neighbours = adjacencyList.get(u);
             for (Neighbour neighbour : neighbours) {
                 int v = neighbour.destination;
                 int w = neighbour.weight;
