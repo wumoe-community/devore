@@ -33,7 +33,7 @@ public class Evaluator {
             ast.clear();
         } else if (ast.op() instanceof DevoreFunctionScheduler) {
             for (int i = 0; i < ast.size(); ++i)
-                if (!ast.get(i).isEmpty() || "id".equals(ast.get(i).op().type()))
+                if (!ast.get(i).isEmpty() || ast.get(i).op() instanceof IdToken)
                     eval(ast.get(i).copy(), env);
             List<Token> args = new ArrayList<>();
             for (int i = 0; i < ast.size(); ++i)
@@ -42,7 +42,7 @@ public class Evaluator {
             ast.clear();
         } else if (ast.op() instanceof DevoreBaseOrdinaryFunctionToken) {
             for (int i = 0; i < ast.size(); ++i)
-                if (!ast.get(i).isEmpty() || "id".equals(ast.get(i).op().type()))
+                if (!ast.get(i).isEmpty() || ast.get(i).op() instanceof IdToken)
                     eval(ast.get(i), env);
             List<Token> args = new ArrayList<>();
             for (int i = 0; i < ast.size(); ++i)
