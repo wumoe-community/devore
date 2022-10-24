@@ -54,10 +54,10 @@ public class CoreModule extends Module {
                 types[i - 1] = typeEmbedded;
                 int finalI = i;
                 env.put(type + "-" + name, BuiltinOrdinaryFunctionToken.make((args, inlineEnv) ->
-                                ((StructureToken) args.get(0)).get(finalI - 1), new String[]{type}, false));
+                        ((StructureToken) args.get(0)).get(finalI - 1), new String[]{type}, false));
                 env.put("set-" + type + "-" + name + "!", BuiltinOrdinaryFunctionToken.make((args, inlineEnv) -> {
-                            ((StructureToken) args.get(0)).set(finalI - 1, args.get(1));
-                            return KeywordToken.KEYWORD_NIL;
+                    ((StructureToken) args.get(0)).set(finalI - 1, args.get(1));
+                    return KeywordToken.KEYWORD_NIL;
                 }, new String[]{type, typeEmbedded}, false));
             }
             env.put("make-" + type, BuiltinOrdinaryFunctionToken.make((args, inlineEnv) ->
