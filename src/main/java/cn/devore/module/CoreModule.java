@@ -737,5 +737,11 @@ public class CoreModule extends Module {
                 RealToken.valueOf(args.get(0).toString()), new String[]{"any"}, false));
         _env.put("->int", BuiltinOrdinaryFunctionToken.make((args, env) ->
                 RealToken.valueOf(RealToken.valueOf(args.get(0).toString()).toInt()), new String[]{"any"}, false));
+        _env.put("eval", BuiltinOrdinaryFunctionToken.make((args, env) -> {
+            Token result = KeywordToken.KEYWORD_NIL;
+            for (Token arg : args)
+                result = Devore.call(((StringToken) arg).value(), env);
+            return result;
+        }, new String[]{"string"}, true));
     }
 }
