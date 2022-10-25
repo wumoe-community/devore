@@ -28,10 +28,9 @@ public class Evaluator {
             ast.clear();
             return ast.op();
         }
-        if (ast.op() instanceof SpecialFunctionToken) {
+        if (ast.op() instanceof SpecialFunctionToken)
             ast.setOp(((SpecialFunctionToken) ast.op()).call(ast, env));
-            ast.clear();
-        } else if (ast.op() instanceof DevoreFunctionScheduler) {
+        else if (ast.op() instanceof DevoreFunctionScheduler) {
             for (int i = 0; i < ast.size(); ++i)
                 if (!ast.get(i).isEmpty() || ast.get(i).op() instanceof IdToken)
                     eval(ast.get(i).copy(), env);
@@ -39,7 +38,6 @@ public class Evaluator {
             for (int i = 0; i < ast.size(); ++i)
                 args.add(ast.get(i).op());
             ast.setOp(((DevoreFunctionScheduler) ast.op()).call(args, env));
-            ast.clear();
         } else if (ast.op() instanceof DevoreBaseOrdinaryFunctionToken) {
             for (int i = 0; i < ast.size(); ++i)
                 if (!ast.get(i).isEmpty() || ast.get(i).op() instanceof IdToken)
@@ -48,8 +46,8 @@ public class Evaluator {
             for (int i = 0; i < ast.size(); ++i)
                 args.add(ast.get(i).op());
             ast.setOp(((DevoreBaseOrdinaryFunctionToken) ast.op()).call(args, env));
-            ast.clear();
         }
+        ast.clear();
         return ast.op();
     }
 }
