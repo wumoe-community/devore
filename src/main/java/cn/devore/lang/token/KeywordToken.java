@@ -44,6 +44,8 @@ public class KeywordToken extends Token {
         return switch (type) {
             case EMPTY -> "()";
             case NIL -> "nil";
+            case LB -> "(";
+            case RB -> ")";
             default -> "";
         };
     }
