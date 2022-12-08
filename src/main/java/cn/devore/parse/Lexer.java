@@ -13,7 +13,7 @@ public class Lexer {
     public static String preprocessor(String code) {
         StringBuilder builder = new StringBuilder();
         int index = 0;
-        char[] chars = code.replaceAll("(\n|\r\n)$\\s*", "").toCharArray();
+        char[] chars = code.toCharArray();
         var i = 0;
         while (i < chars.length) {
             char c = chars[i];
@@ -39,7 +39,7 @@ public class Lexer {
                 do {
                     if (++i == chars.length)
                         return builder.toString();
-                } while (chars[i] != '\n');
+                } while (chars[i] != '\n' || chars[i] != '\r');
             } else if (c == '(') {
                 ++index;
                 builder.append(c);
@@ -48,7 +48,7 @@ public class Lexer {
                 builder.append(c);
             } else if (index >= 1 && (c == ' ' || c == '\n' || c == '\t')) {
                 var j = i + 1;
-                while (chars[j] == ' ' || chars[j] == '\n' || chars[j] == '\t') {
+                while (chars[j] == ' ' || chars[j] == '\n' || chars[j] == '\r' || chars[j] == '\t') {
                     ++i;
                     ++j;
                 }
