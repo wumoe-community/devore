@@ -12,7 +12,7 @@ repositories {
 jar {
     manifest {
         attributes 'Main-Class': 'cn.devore.Devore'
-        attributes 'Implementation-Version': version
+        attributes 'Implementation-Version': archiveVersion
     }
     from {
         configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
