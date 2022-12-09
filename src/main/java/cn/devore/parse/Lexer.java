@@ -35,20 +35,26 @@ public class Lexer {
                 }
                 builder.append("\"");
                 ++i;
-            } else if (c == ';' || c == '\r') {
+            } else if (c == ';') {
                 do {
                     if (++i == chars.length)
                         return builder.toString();
-                } while (chars[i] != '\n' || chars[i] != '\r');
+                } while (chars[i] != '\n');
+            } else if (c == '\n') {
+                do {
+                    if (++i == chars.length)
+                        return builder.toString();
+                } while (chars[i] == ' ' || chars[i] == '\n' || chars[i] == '\t');
+                --i;
             } else if (c == '(') {
                 ++index;
                 builder.append(c);
             } else if (c == ')') {
                 --index;
                 builder.append(c);
-            } else if (index >= 1 && (c == ' ' || c == '\n' || c == '\t')) {
+            } else if (index >= 1 && (c == ' ' || c == '\t')) {
                 var j = i + 1;
-                while (chars[j] == ' ' || chars[j] == '\n' || chars[j] == '\r' || chars[j] == '\t') {
+                while (chars[j] == ' ' || chars[j] == '\n' || chars[j] == '\t') {
                     ++i;
                     ++j;
                 }
